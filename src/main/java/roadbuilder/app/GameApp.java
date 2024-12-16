@@ -4,7 +4,6 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.GameWorld;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
@@ -12,7 +11,7 @@ import javafx.scene.shape.Rectangle;
 import roadbuilder.model.TileType;
 import roadbuilder.util.ImageLoader;
 
-public class Main extends GameApplication {
+public class GameApp extends GameApplication {
 
     private static final int TILE_SIZE = 40;
     private static final int GRID_WIDTH = 10;
@@ -30,7 +29,12 @@ public class Main extends GameApplication {
     protected void initGame() {
         for (int y = 0; y < GRID_HEIGHT; y++) {
             for (int x = 0; x < GRID_WIDTH; x++) {
-                javafx.scene.image.ImageView imageView = new javafx.scene.image.ImageView(ImageLoader.getImage(TileType.GRASS));
+                TileType tileType = TileType.GRASS;
+                if ((x == 2 && y == 2) || (x == 4 && y == 4)) {
+                    tileType = TileType.CITY;
+                }
+
+                javafx.scene.image.ImageView imageView = new javafx.scene.image.ImageView(ImageLoader.getImage(tileType));
                 imageView.setFitWidth(TILE_SIZE);
                 imageView.setFitHeight(TILE_SIZE);
 
@@ -38,7 +42,7 @@ public class Main extends GameApplication {
                         .at(x * TILE_SIZE, y * TILE_SIZE)
                         .view(new Rectangle(TILE_SIZE, TILE_SIZE, Color.LIGHTGRAY))
                         .view(imageView)
-                        .with(new TileComponent(TileType.GRASS))
+                        .with(new TileComponent(tileType))
                         .buildAndAttach();
 
                 System.out.println("Tile created at: " + x * TILE_SIZE + ", " + y * TILE_SIZE);

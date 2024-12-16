@@ -17,4 +17,8 @@ public class TileComponent extends Component {
     public void setTileType(TileType tileType) {
         this.tileType = tileType;
     }
+
+    public boolean isCity() {
+        return this.tileType == TileType.CITY;
+    }
 }
