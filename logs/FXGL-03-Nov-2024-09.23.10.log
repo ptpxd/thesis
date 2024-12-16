@@ -33,7 +33,7 @@ Scene Factory: class com.almasb.fxgl.app.scene.SceneFactory
 09:23:00.635 [JavaFX Application Thread] DEBUG PrimaryStageWindow   - Scene size: 400.0 x 400.0
 09:23:00.635 [JavaFX Application Thread] DEBUG PrimaryStageWindow   - Stage size: 414.3999938964844 x 437.6000061035156
 09:23:00.645 [FXGL Background Thread 1 ] DEBUG Engine               - Initializing environment variables
-09:23:00.706 [FXGL Background Thread 1 ] DEBUG FXGLAssetLoaderServi - User app class for loading assets: class roadbuilder.app.Main
+09:23:00.706 [FXGL Background Thread 1 ] DEBUG FXGLAssetLoaderServi - User app class for loading assets: class roadbuilder.app.GameApp
 09:23:00.706 [FXGL Background Thread 1 ] DEBUG GameApplicationServi - Applying CSS: fxgl_dark.css
 09:23:00.707 [FXGL Background Thread 1 ] DEBUG FXGLAssetLoaderServi - Loading from file system: jar:file:/C:/Users/petro/.m2/repository/com/github/almasb/fxgl/21.1/fxgl-21.1.jar!/fxglassets/ui/css/fxgl_dark.css
 09:23:00.771 [FXGL Background Thread 1 ] DEBUG GameApplicationServi - Initializing application scenes
@@ -171,7 +171,7 @@ Scene Factory: class com.almasb.fxgl.app.scene.SceneFactory
 09:23:04.335 [FXGL Background Thread 3 ] DEBUG Engine               - urlGithub: https://github.com/AlmasB/FXGL
 09:23:04.335 [FXGL Background Thread 3 ] DEBUG Engine               - urlLeaderboard: http://fxgl-top.herokuapp.com/
 09:23:04.336 [FXGL Background Thread 3 ] DEBUG Engine               - urlPOM: https://raw.githubusercontent.com/AlmasB/FXGL/release/README.md
-09:23:04.336 [FXGL Background Thread 3 ] DEBUG Engine               - userAppClass: class roadbuilder.app.Main
+09:23:04.336 [FXGL Background Thread 3 ] DEBUG Engine               - userAppClass: class roadbuilder.app.GameApp
 09:23:04.336 [FXGL Background Thread 3 ] DEBUG Engine               - version: 1.0
 09:23:04.336 [FXGL Background Thread 3 ] DEBUG Engine               - versionCheckDays: 7
 09:23:04.336 [FXGL Background Thread 3 ] DEBUG Engine               - width: 400
