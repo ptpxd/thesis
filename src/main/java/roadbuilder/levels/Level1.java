@@ -7,7 +7,6 @@ import com.almasb.fxgl.entity.Entity;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import roadbuilder.app.TileComponent;
 import roadbuilder.model.TileType;
@@ -25,6 +24,7 @@ public class Level1 extends GameApplication {
     private static final int GRID_HEIGHT = 10;
     private List<Point2D> cities = new ArrayList<>();
     private Set<String> roads = new HashSet<>();
+    private Point2D firstCityClicked = null;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -86,21 +86,31 @@ public class Level1 extends GameApplication {
             if (event.getButton() == MouseButton.PRIMARY) {
                 Point2D clickPoint = new Point2D(event.getSceneX(), event.getSceneY());
                 cities.stream()
-                        .filter(city -> city.distance(clickPoint) < TILE_SIZE)
+                        .filter(city -> isClickWithinCityBounds(city, clickPoint))
                         .findFirst()
-                        .ifPresent(city -> {
-                            System.out.println("City clicked: " + city);
-                            cities.forEach(otherCity -> {
-                                if (!city.equals(otherCity) && !isRoadExists(city, otherCity)) {
-                                    buildRoad(city, otherCity);
-                                    System.out.println("New road created between: " + city + " and " + otherCity);
-                                    System.out.println("Degree of " + city + ": " + getDegree(city));
-                                    System.out.println("Degree of " + otherCity + ": " + getDegree(otherCity));
-                                }
-                            });
-                        });
+                        .ifPresent(city -> handleCityClick(city));
             }
         });
+    }
+
+    private boolean isClickWithinCityBounds(Point2D city, Point2D clickPoint) {
+        double cityX = city.getX();
+        double cityY = city.getY();
+        return clickPoint.getX() >= cityX && clickPoint.getX() <= cityX + TILE_SIZE &&
+               clickPoint.getY() >= cityY && clickPoint.getY() <= cityY + TILE_SIZE;
+    }
+
+    private void handleCityClick(Point2D city) {
+        if (firstCityClicked == null) {
+            firstCityClicked = city;
+            System.out.println("First city selected: " + city);
+        } else {
+            if (!city.equals(firstCityClicked) && !isRoadExists(firstCityClicked, city)) {
+                buildRoad(firstCityClicked, city);
+                System.out.println("New road created between: " + firstCityClicked + " and " + city);
+            }
+            firstCityClicked = null; // Reset after second click
+        }
     }
 
     private boolean isRoadExists(Point2D start, Point2D end) {
@@ -112,15 +122,55 @@ public class Level1 extends GameApplication {
     private void buildRoad(Point2D start, Point2D end) {
         if (!isRoadExists(start, end)) {
             roads.add(start.toString() + "-" + end.toString());
-            Line roadLine = new Line(start.getX(), start.getY(), end.getX(), end.getY());
-            roadLine.setStroke(Color.DARKGRAY);
-            roadLine.setStrokeWidth(5);
-            FXGL.getGameScene().addUINode(roadLine);
+
+            // Use Bresenham's line algorithm to determine the path
+            int x0 = (int) start.getX() / TILE_SIZE;
+            int y0 = (int) start.getY() / TILE_SIZE;
+            int x1 = (int) end.getX() / TILE_SIZE;
+            int y1 = (int) end.getY() / TILE_SIZE;
+
+            int dx = Math.abs(x1 - x0);
+            int dy = Math.abs(y1 - y0);
+            int sx = x0 < x1 ? 1 : -1;
+            int sy = y0 < y1 ? 1 : -1;
+            int err = dx - dy;
+
+            while (true) {
+                if (!isCityTile(x0, y0)) {
+                    placeRoadSegment(x0, y0);
+                }
+                if (x0 == x1 && y0 == y1) break;
+                int e2 = 2 * err;
+                if (e2 > -dy) {
+                    err -= dy;
+                    x0 += sx;
+                }
+                if (e2 < dx) {
+                    err += dx;
+                    y0 += sy;
+                }
+            }
         }
     }
 
-    private int getDegree(Point2D city) {
-        return (int) roads.stream().filter(road -> road.contains(city.toString())).count();
+    private boolean isCityTile(int x, int y) {
+        Point2D tilePoint = new Point2D(x * TILE_SIZE, y * TILE_SIZE);
+        return cities.contains(tilePoint);
+    }
+
+    private void placeRoadSegment(int x, int y) {
+        Point2D roadPoint = new Point2D(x * TILE_SIZE, y * TILE_SIZE);
+
+        javafx.scene.image.ImageView imageView = new javafx.scene.image.ImageView(ImageLoader.getImage(TileType.ROAD_STRAIGHT));
+        imageView.setFitWidth(TILE_SIZE);
+        imageView.setFitHeight(TILE_SIZE);
+
+        Entity road = FXGL.entityBuilder()
+                .at(roadPoint)
+                .view(new Rectangle(TILE_SIZE, TILE_SIZE, Color.DARKGRAY))
+                .view(imageView)
+                .with(new TileComponent(TileType.ROAD_STRAIGHT))
+                .buildAndAttach();
     }
 
     public static void main(String[] args) {
