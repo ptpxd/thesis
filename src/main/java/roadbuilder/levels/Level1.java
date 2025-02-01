@@ -45,6 +45,7 @@ public class Level1 extends GameApplication {
         placeCity(2, 2);
         placeCity(5, 5);
         placeCity(7, 7);
+        placeCity(2, 6);
     }
 
     private void placeCity(int x, int y) {
@@ -137,7 +138,7 @@ public class Level1 extends GameApplication {
 
             while (true) {
                 if (!isCityTile(x0, y0)) {
-                    placeRoadSegment(x0, y0);
+                    placeRoadSegment(x0, y0, x0 != x1 && y0 != y1, sx, sy);
                 }
                 if (x0 == x1 && y0 == y1) break;
                 int e2 = 2 * err;
@@ -158,10 +159,21 @@ public class Level1 extends GameApplication {
         return cities.contains(tilePoint);
     }
 
-    private void placeRoadSegment(int x, int y) {
+    private void placeRoadSegment(int x, int y, boolean isDiagonal, int sx, int sy) {
         Point2D roadPoint = new Point2D(x * TILE_SIZE, y * TILE_SIZE);
 
-        javafx.scene.image.ImageView imageView = new javafx.scene.image.ImageView(ImageLoader.getImage(TileType.ROAD_STRAIGHT));
+        TileType roadType;
+        if (isDiagonal) {
+            if (sx == sy) {
+                roadType = TileType.DIAGONAL_ROAD_RIGHT_TO_LEFT;
+            } else {
+                roadType = TileType.DIAGONAL_ROAD_LEFT_TO_RIGHT;
+            }
+        } else {
+            roadType = TileType.ROAD_STRAIGHT;
+        }
+
+        javafx.scene.image.ImageView imageView = new javafx.scene.image.ImageView(ImageLoader.getImage(roadType));
         imageView.setFitWidth(TILE_SIZE);
         imageView.setFitHeight(TILE_SIZE);
 
@@ -169,7 +181,7 @@ public class Level1 extends GameApplication {
                 .at(roadPoint)
                 .view(new Rectangle(TILE_SIZE, TILE_SIZE, Color.DARKGRAY))
                 .view(imageView)
-                .with(new TileComponent(TileType.ROAD_STRAIGHT))
+                .with(new TileComponent(roadType))
                 .buildAndAttach();
     }
 
