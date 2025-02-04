@@ -19,6 +19,7 @@ public class ImageLoader {
         images.put(TileType.ROAD_CURVED, new Image(IMAGE_PATH + "left_to_up.png"));
         images.put(TileType.DIAGONAL_ROAD_LEFT_TO_RIGHT, new Image(IMAGE_PATH + "diagonal_road_left_to_right.png"));
         images.put(TileType.DIAGONAL_ROAD_RIGHT_TO_LEFT, new Image(IMAGE_PATH + "diagonal_road_right_to_left.png"));
+        images.put(TileType.ROAD_HORIZONTAL, new Image(IMAGE_PATH + "two_way_road_horizontal.png")); // New image mapping
     }
 
     public static Image getImage(TileType type) {
