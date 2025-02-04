@@ -45,9 +45,12 @@ public class MainMenu extends GameApplication {
     }
 
     private void startGame(int level) {
-        // Initialize your game with the selected level
-        System.out.println("Starting game at level " + level);
-        // Add your game initialization logic here
+        if (level == 1) {
+            MainGameRunner.getInstance().startLevel1();
+        } else {
+            System.out.println("Starting game at level " + level);
+            // Add logic for other levels if needed
+        }
     }
 
     public static void main(String[] args) {
