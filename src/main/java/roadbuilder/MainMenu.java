@@ -46,6 +46,7 @@ public class MainMenu extends GameApplication {
 
     private void startGame(int level) {
         if (level == 1) {
+            System.out.println("Starting Level 1");
             MainGameRunner.getInstance().startLevel1();
         } else {
             System.out.println("Starting game at level " + level);

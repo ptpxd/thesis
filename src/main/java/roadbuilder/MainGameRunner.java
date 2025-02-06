@@ -2,10 +2,11 @@ package roadbuilder;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import roadbuilder.levels.level1.GameSettingsManager;
 import roadbuilder.levels.level1.GameInitializer;
 import roadbuilder.levels.level1.UIManager;
 import roadbuilder.levels.level1.InputHandler;
+import roadbuilder.levels.level1.Level1Game;
+import roadbuilder.util.Point2DUtil;
 
 import javafx.geometry.Point2D;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class MainGameRunner {
     private GameInitializer gameInitializer = new GameInitializer();
     private UIManager uiManager = new UIManager();
     private InputHandler inputHandler = new InputHandler(10000);
+    private Level1Game level1Game = new Level1Game();
 
     private MainGameRunner() {}
 
@@ -35,10 +37,12 @@ public class MainGameRunner {
         initGame();
         initUI();
         initInput();
+        initGraph();
     }
 
     private void initGame() {
         gameInitializer.initGame(cities);
+        level1Game.initializeLevel(cities);
     }
 
     private void initUI() {
@@ -47,5 +51,19 @@ public class MainGameRunner {
 
     private void initInput() {
         inputHandler.initInput(cities, roads);
+    }
+
+    private void initGraph() {
+        for (String road : roads) {
+            String[] points = road.split("-");
+            Point2D start = Point2DUtil.fromString(points[0]);
+            Point2D end = Point2DUtil.fromString(points[1]);
+            level1Game.addRoad(start, end);
+        }
+        level1Game.getConnectedCities(cities.get(0)); // Example usage
+    }
+
+    public static void main(String[] args) {
+        MainGameRunner.getInstance().startLevel1();
     }
 }
