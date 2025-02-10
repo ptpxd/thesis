@@ -2,10 +2,7 @@ package roadbuilder;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import roadbuilder.levels.level1.GameInitializer;
-import roadbuilder.levels.level1.UIManager;
-import roadbuilder.levels.level1.InputHandler;
-import roadbuilder.levels.level1.Level1Game;
+import roadbuilder.levels.level1.*;
 import roadbuilder.util.Point2DUtil;
 
 import javafx.geometry.Point2D;
@@ -38,6 +35,7 @@ public class MainGameRunner {
         initUI();
         initInput();
         initGraph();
+        displayGraphType();
     }
 
     private void initGame() {
@@ -61,6 +59,11 @@ public class MainGameRunner {
             level1Game.addRoad(start, end);
         }
         level1Game.getConnectedCities(cities.get(0)); // Example usage
+    }
+
+    private void displayGraphType() {
+        GraphTypeDetector.GraphType graphType = level1Game.analyzeGraphType(roads, cities);
+        System.out.println("The graph type is: " + graphType);
     }
 
     public static void main(String[] args) {

@@ -1,6 +1,7 @@
 package roadbuilder.model;
 
 import javafx.geometry.Point2D;
+
 import java.util.*;
 
 public class CityRoadGraphModel {
@@ -22,6 +23,9 @@ public class CityRoadGraphModel {
         if (cities.contains(start) && cities.contains(end)) {
             roads.get(start).add(end);
             roads.get(end).add(start); // Assuming undirected roads
+            System.out.println("Road added between " + start + " and " + end);
+        } else {
+            System.out.println("Cannot add road: One or both cities not found.");
         }
     }
 

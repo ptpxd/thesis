@@ -1,8 +1,10 @@
 package roadbuilder.levels.level1;
 
 import javafx.geometry.Point2D;
-import roadbuilder.model.CityRoadGraphModel;
 import java.util.List;
+import java.util.Set;
+import roadbuilder.levels.level1.GraphTypeDetector.GraphType;
+import roadbuilder.model.CityRoadGraphModel;
 
 public class Level1Game {
 
@@ -45,5 +47,9 @@ public class Level1Game {
             }
         }
         return true;
+    }
+
+    public GraphType analyzeGraphType(Set<String> roads, List<Point2D> cities) {
+        return GraphTypeDetector.detectGraphType(roads, cities);
     }
 }
