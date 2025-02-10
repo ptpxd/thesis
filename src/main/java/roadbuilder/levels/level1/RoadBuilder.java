@@ -2,22 +2,29 @@ package roadbuilder.levels.level1;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import roadbuilder.app.TileComponent;
+import roadbuilder.model.TileType;
+import roadbuilder.model.CityRoadGraphModel;
+import roadbuilder.util.ImageLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import roadbuilder.app.TileComponent;
-import roadbuilder.model.TileType;
-import roadbuilder.util.ImageLoader;
 
 import java.util.List;
 import java.util.Set;
 
 public class RoadBuilder {
     private static final int TILE_SIZE = 40;
+    private static CityRoadGraphModel graphModel = new CityRoadGraphModel();
 
     public static void buildRoad(Point2D start, Point2D end, Set<String> roads, List<Point2D> cities) {
+        // Ensure both cities are added to the graph model
+        graphModel.addCity(start);
+        graphModel.addCity(end);
+
         if (!isRoadExists(start, end, roads)) {
             roads.add(start.toString() + "-" + end.toString());
+            graphModel.addRoad(start, end); // Update the graph model
 
             int x0 = (int) start.getX() / TILE_SIZE;
             int y0 = (int) start.getY() / TILE_SIZE;
