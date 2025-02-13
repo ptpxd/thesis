@@ -14,19 +14,24 @@ public class CityRoadGraphModel {
         roads = new HashMap<>();
     }
 
-    public void addCity(Point2D city) {
-        cities.add(city);
-        roads.putIfAbsent(city, new ArrayList<>());
+    public boolean addCity(Point2D city) {
+        if (cities.add(city)) {
+            roads.putIfAbsent(city, new ArrayList<>());
+            return true;
+        }
+        return false;
     }
 
-    public void addRoad(Point2D start, Point2D end) {
+    public boolean addRoad(Point2D start, Point2D end) {
         if (cities.contains(start) && cities.contains(end)) {
-            roads.get(start).add(end);
-            roads.get(end).add(start); // Assuming undirected roads
-            System.out.println("Road added between " + start + " and " + end);
-        } else {
-            System.out.println("Cannot add road: One or both cities not found.");
+            if (!roads.get(start).contains(end)) {
+                roads.get(start).add(end);
+                roads.get(end).add(start); // Assuming undirected roads
+                return true;
+            }
+            return false;
         }
+        return false;
     }
 
     public List<Point2D> getConnectedCities(Point2D city) {
@@ -35,6 +40,10 @@ public class CityRoadGraphModel {
 
     public Set<Point2D> getCities() {
         return cities;
+    }
+
+    public Map<Point2D, List<Point2D>> getRoads() {
+        return roads;
     }
 
     public void printCityConnections() {

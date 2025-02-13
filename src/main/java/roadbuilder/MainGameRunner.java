@@ -1,11 +1,9 @@
 package roadbuilder;
 
-import com.almasb.fxgl.app.GameApplication;
-import com.almasb.fxgl.app.GameSettings;
+import javafx.geometry.Point2D;
 import roadbuilder.levels.level1.*;
 import roadbuilder.util.Point2DUtil;
 
-import javafx.geometry.Point2D;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,10 +16,12 @@ public class MainGameRunner {
     private Set<String> roads = new HashSet<>();
     private GameInitializer gameInitializer = new GameInitializer();
     private UIManager uiManager = new UIManager();
-    private InputHandler inputHandler = new InputHandler(10000);
+    private InputHandler inputHandler;
     private Level1Game level1Game = new Level1Game();
 
-    private MainGameRunner() {}
+    private MainGameRunner() {
+        inputHandler = new InputHandler(10000, level1Game);
+    }
 
     public static MainGameRunner getInstance() {
         if (instance == null) {
@@ -35,7 +35,6 @@ public class MainGameRunner {
         initUI();
         initInput();
         initGraph();
-        displayGraphType();
     }
 
     private void initGame() {
@@ -59,11 +58,6 @@ public class MainGameRunner {
             level1Game.addRoad(start, end);
         }
         level1Game.getConnectedCities(cities.get(0)); // Example usage
-    }
-
-    private void displayGraphType() {
-        GraphTypeDetector.GraphType graphType = level1Game.analyzeGraphType(roads, cities);
-        System.out.println("The graph type is: " + graphType);
     }
 
     public static void main(String[] args) {

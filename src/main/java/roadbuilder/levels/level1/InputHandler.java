@@ -12,9 +12,11 @@ import java.util.Set;
 public class InputHandler {
     private int budget;
     private Point2D firstCityClicked = null;
+    private Level1Game level1Game;
 
-    public InputHandler(int initialBudget) {
+    public InputHandler(int initialBudget, Level1Game level1Game) {
         this.budget = initialBudget;
+        this.level1Game = level1Game;
     }
 
     public void initInput(List<Point2D> cities, Set<String> roads) {
@@ -51,7 +53,7 @@ public class InputHandler {
             if (!city.equals(firstCityClicked) && !isRoadExists(firstCityClicked, city, roads)) {
                 int cost = calculateRoadCost(firstCityClicked, city);
                 if (budget >= cost) {
-                    RoadBuilder.buildRoad(firstCityClicked, city, roads, cities);
+                    RoadBuilder.buildRoad(firstCityClicked, city, roads, cities, level1Game);
                     budget -= cost;
                     FXGL.getWorldProperties().setValue("budget", budget);
                 }

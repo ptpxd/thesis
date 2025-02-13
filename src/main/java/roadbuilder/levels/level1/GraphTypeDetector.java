@@ -1,6 +1,7 @@
 package roadbuilder.levels.level1;
 
 import javafx.geometry.Point2D;
+import roadbuilder.model.CityRoadGraphModel;
 import java.util.*;
 
 public class GraphTypeDetector {
@@ -9,30 +10,64 @@ public class GraphTypeDetector {
         SIMPLE, COMPLETE, BIPARTITE, COMPLEX
     }
 
-    public static GraphType detectGraphType(Set<String> roads, List<Point2D> cities) {
-        int cityCount = cities.size();
-        int roadCount = roads.size();
+    public static GraphType detectGraphType(CityRoadGraphModel graphModel) {
+        if (graphModel == null || graphModel.getCities().isEmpty()) {
+            return GraphType.SIMPLE;
+        }
 
-        if (roadCount == cityCount * (cityCount - 1) / 2) {
+        Set<Point2D> cities = graphModel.getCities();
+        Map<Point2D, List<Point2D>> roads = graphModel.getRoads();
+        int cityCount = cities.size();
+
+        // Üres gráf esete
+        if (roads.values().stream().allMatch(List::isEmpty)) {
+            return GraphType.SIMPLE;
+        }
+
+        // Teljes gráf ellenőrzése
+        if (isCompleteGraph(cities, roads, cityCount)) {
             return GraphType.COMPLETE;
         }
 
+        // Bipartite gráf ellenőrzése
         if (isBipartiteGraph(cities, roads)) {
             return GraphType.BIPARTITE;
         }
 
-        if (roadCount == cityCount - 1) {
+        // Simple gráf ellenőrzése (elsősorban árnyékosztruktúra)
+        if (isSimpleGraph(cities, roads, cityCount)) {
             return GraphType.SIMPLE;
         }
 
+        // Alapértelmezetten complex
         return GraphType.COMPLEX;
     }
 
-    private static boolean isBipartiteGraph(List<Point2D> cities, Set<String> roads) {
+    private static boolean isCompleteGraph(Set<Point2D> cities, Map<Point2D, List<Point2D>> roads, int cityCount) {
+        if (cityCount <= 1) return true;
+
+        int expectedEdges = cityCount * (cityCount - 1);
+        int actualEdges = roads.values().stream().mapToInt(List::size).sum();
+
+        for (Point2D city : cities) {
+            List<Point2D> connections = roads.get(city);
+            if (connections.size() != cityCount - 1) {
+                return false;
+            }
+            for (Point2D otherCity : cities) {
+                if (!otherCity.equals(city) && !connections.contains(otherCity)) {
+                    return false;
+                }
+            }
+        }
+        return actualEdges == expectedEdges;
+    }
+
+    private static boolean isBipartiteGraph(Set<Point2D> cities, Map<Point2D, List<Point2D>> roads) {
         Map<Point2D, Integer> colorMap = new HashMap<>();
         for (Point2D city : cities) {
             if (!colorMap.containsKey(city)) {
-                if (!bipartiteDFS(city, roads, colorMap, 0)) {
+                if (!bipartiteBFS(city, roads, colorMap)) {
                     return false;
                 }
             }
@@ -40,24 +75,61 @@ public class GraphTypeDetector {
         return true;
     }
 
-    private static boolean bipartiteDFS(Point2D city, Set<String> roads, Map<Point2D, Integer> colorMap, int color) {
-        colorMap.put(city, color);
-        for (String road : roads) {
-            String[] points = road.split("-");
-            Point2D start = new Point2D(Double.parseDouble(points[0]), Double.parseDouble(points[1]));
-            Point2D end = new Point2D(Double.parseDouble(points[2]), Double.parseDouble(points[3]));
+    private static boolean bipartiteBFS(Point2D start, Map<Point2D, List<Point2D>> roads, Map<Point2D, Integer> colorMap) {
+        Queue<Point2D> queue = new LinkedList<>();
+        colorMap.put(start, 0);
+        queue.add(start);
 
-            if (start.equals(city) || end.equals(city)) {
-                Point2D neighbor = start.equals(city) ? end : start;
+        while (!queue.isEmpty()) {
+            Point2D current = queue.poll();
+            List<Point2D> neighbors = roads.getOrDefault(current, Collections.emptyList());
+
+            for (Point2D neighbor : neighbors) {
                 if (!colorMap.containsKey(neighbor)) {
-                    if (!bipartiteDFS(neighbor, roads, colorMap, 1 - color)) {
-                        return false;
-                    }
-                } else if (colorMap.get(neighbor) == color) {
+                    colorMap.put(neighbor, colorMap.get(current) ^ 1);
+                    queue.add(neighbor);
+                } else if (colorMap.get(neighbor) == colorMap.get(current)) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    private static boolean isSimpleGraph(Set<Point2D> cities, Map<Point2D, List<Point2D>> roads, int cityCount) {
+        int edgeCount = roads.values().stream().mapToInt(List::size).sum() / 2;
+        if (edgeCount > cityCount - 1) {
+            return false;
+        }
+
+        return !hasCycle(cities, roads);
+    }
+
+    private static boolean hasCycle(Set<Point2D> cities, Map<Point2D, List<Point2D>> roads) {
+        Map<Point2D, Boolean> visited = new HashMap<>();
+        for (Point2D city : cities) {
+            if (!visited.containsKey(city)) {
+                if (cycleDFS(city, roads, visited, null)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean cycleDFS(Point2D current, Map<Point2D, List<Point2D>> roads, Map<Point2D, Boolean> visited, Point2D parent) {
+        visited.put(current, true);
+        List<Point2D> neighbors = roads.getOrDefault(current, Collections.emptyList());
+
+        for (Point2D neighbor : neighbors) {
+            if (!visited.containsKey(neighbor)) {
+                if (cycleDFS(neighbor, roads, visited, current)) {
+                    return true;
+                }
+            } else if (!neighbor.equals(parent)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
