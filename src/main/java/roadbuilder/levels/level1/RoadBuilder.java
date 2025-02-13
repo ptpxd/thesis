@@ -4,80 +4,66 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import roadbuilder.app.TileComponent;
 import roadbuilder.model.TileType;
-import roadbuilder.model.CityRoadGraphModel;
 import roadbuilder.util.ImageLoader;
 import javafx.geometry.Point2D;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-
 import java.util.List;
 import java.util.Set;
 
 public class RoadBuilder {
     private static final int TILE_SIZE = 40;
-    private static CityRoadGraphModel graphModel = new CityRoadGraphModel();
 
-    public static void buildRoad(Point2D start, Point2D end, Set<String> roads, List<Point2D> cities) {
-        // Ensure both cities are added to the graph model
-        graphModel.addCity(start);
-        graphModel.addCity(end);
+    public static void buildRoad(Point2D start, Point2D end, Set<String> roads, List<Point2D> cities, Level1Game level1Game) {
+        // Use the provided Level1Game instance to handle road addition
+        level1Game.addRoad(start, end);
 
-        if (!isRoadExists(start, end, roads)) {
-            roads.add(start.toString() + "-" + end.toString());
-            graphModel.addRoad(start, end); // Update the graph model
+        int x0 = (int) start.getX() / TILE_SIZE;
+        int y0 = (int) start.getY() / TILE_SIZE;
+        int x1 = (int) end.getX() / TILE_SIZE;
+        int y1 = (int) end.getY() / TILE_SIZE;
 
-            int x0 = (int) start.getX() / TILE_SIZE;
-            int y0 = (int) start.getY() / TILE_SIZE;
-            int x1 = (int) end.getX() / TILE_SIZE;
-            int y1 = (int) end.getY() / TILE_SIZE;
-
-            if (x0 == x1) {
-                // Vertical road
-                while (y0 != y1) {
-                    if (!isCityTile(x0, y0, cities)) {
-                        placeRoadSegment(x0, y0, false, 0, y0 < y1 ? 1 : -1);
-                    }
-                    y0 += y0 < y1 ? 1 : -1;
+        if (x0 == x1) {
+            // Vertical road
+            while (y0 != y1) {
+                if (!isCityTile(x0, y0, cities)) {
+                    placeRoadSegment(x0, y0, false, 0, y0 < y1 ? 1 : -1);
                 }
-            } else if (y0 == y1) {
-                // Horizontal road
-                while (x0 != x1) {
-                    if (!isCityTile(x0, y0, cities)) {
-                        placeRoadSegment(x0, y0, false, x0 < x1 ? 1 : -1, 0);
-                    }
-                    x0 += x0 < x1 ? 1 : -1;
+                y0 += y0 < y1 ? 1 : -1;
+            }
+        } else if (y0 == y1) {
+            // Horizontal road
+            while (x0 != x1) {
+                if (!isCityTile(x0, y0, cities)) {
+                    placeRoadSegment(x0, y0, false, x0 < x1 ? 1 : -1, 0);
                 }
-            } else {
-                // Diagonal or mixed path
-                int dx = Math.abs(x1 - x0);
-                int dy = Math.abs(y1 - y0);
-                int sx = x0 < x1 ? 1 : -1;
-                int sy = y0 < y1 ? 1 : -1;
-                int err = dx - dy;
+                x0 += x0 < x1 ? 1 : -1;
+            }
+        } else {
+            // Diagonal or mixed path
+            int dx = Math.abs(x1 - x0);
+            int dy = Math.abs(y1 - y0);
+            int sx = x0 < x1 ? 1 : -1;
+            int sy = y0 < y1 ? 1 : -1;
+            int err = dx - dy;
 
-                while (true) {
-                    if (!isCityTile(x0, y0, cities)) {
-                        placeRoadSegment(x0, y0, dx != 0 && dy != 0, sx, sy);
-                    }
-                    if (x0 == x1 && y0 == y1) break;
-                    int e2 = 2 * err;
-                    if (e2 > -dy) {
-                        err -= dy;
-                        x0 += sx;
-                    }
-                    if (e2 < dx) {
-                        err += dx;
-                        y0 += sy;
-                    }
+            while (true) {
+                if (!isCityTile(x0, y0, cities)) {
+                    placeRoadSegment(x0, y0, dx != 0 && dy != 0, sx, sy);
+                }
+                if (x0 == x1 && y0 == y1) break;
+                int e2 = 2 * err;
+                if (e2 > -dy) {
+                    err -= dy;
+                    x0 += sx;
+                }
+                if (e2 < dx) {
+                    err += dx;
+                    y0 += sy;
                 }
             }
         }
-    }
-
-    private static boolean isRoadExists(Point2D start, Point2D end, Set<String> roads) {
-        String roadKey = start.toString() + "-" + end.toString();
-        String reverseRoadKey = end.toString() + "-" + start.toString();
-        return roads.contains(roadKey) || roads.contains(reverseRoadKey);
     }
 
     private static boolean isCityTile(int x, int y, List<Point2D> cities) {
@@ -99,7 +85,7 @@ public class RoadBuilder {
             roadType = TileType.ROAD_HORIZONTAL;
         }
 
-        javafx.scene.image.ImageView imageView = new javafx.scene.image.ImageView(ImageLoader.getImage(roadType));
+        ImageView imageView = new ImageView(ImageLoader.getImage(roadType));
         imageView.setFitWidth(TILE_SIZE);
         imageView.setFitHeight(TILE_SIZE);
 

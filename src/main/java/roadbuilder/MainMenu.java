@@ -5,8 +5,13 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
+import javafx.geometry.Point2D;
+import roadbuilder.model.CityRoadGraphModel;
+import roadbuilder.MainGameRunner;
 
 public class MainMenu extends GameApplication {
+
+    private CityRoadGraphModel graphModel;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -17,6 +22,8 @@ public class MainMenu extends GameApplication {
 
     @Override
     protected void initUI() {
+        graphModel = new CityRoadGraphModel();
+
         VBox menuBox = new VBox(10);
         menuBox.setTranslateX(350);
         menuBox.setTranslateY(250);
