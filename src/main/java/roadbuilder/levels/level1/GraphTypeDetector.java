@@ -29,20 +29,21 @@ public class GraphTypeDetector {
             return GraphType.COMPLETE;
         }
 
+        // Simple gráf ellenőrzése előbb, mint a bipartite
+        if (isSimpleGraph(cities, roads, cityCount)) {
+            return GraphType.SIMPLE;
+        }
+
         // Bipartite gráf ellenőrzése
         if (isBipartiteGraph(cities, roads)) {
             return GraphType.BIPARTITE;
-        }
-
-        // Simple gráf ellenőrzése (elsősorban árnyékosztruktúra)
-        if (isSimpleGraph(cities, roads, cityCount)) {
-            return GraphType.SIMPLE;
         }
 
         // Alapértelmezetten complex
         return GraphType.COMPLEX;
     }
 
+    // A többi metódus marad azonos...
     private static boolean isCompleteGraph(Set<Point2D> cities, Map<Point2D, List<Point2D>> roads, int cityCount) {
         if (cityCount <= 1) return true;
 
@@ -102,7 +103,38 @@ public class GraphTypeDetector {
             return false;
         }
 
+        // Ellenőrizzük, hogy a gráf összekötött
+        if (!isConnected(cities, roads)) {
+            return false;
+        }
+
         return !hasCycle(cities, roads);
+    }
+
+    private static boolean isConnected(Set<Point2D> cities, Map<Point2D, List<Point2D>> roads) {
+        if (cities.isEmpty()) {
+            return true;
+        }
+
+        Set<Point2D> visited = new HashSet<>();
+        Queue<Point2D> queue = new LinkedList<>();
+        Point2D start = cities.iterator().next();
+        queue.add(start);
+        visited.add(start);
+
+        while (!queue.isEmpty()) {
+            Point2D current = queue.poll();
+            List<Point2D> neighbors = roads.getOrDefault(current, Collections.emptyList());
+
+            for (Point2D neighbor : neighbors) {
+                if (!visited.contains(neighbor)) {
+                    visited.add(neighbor);
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        return visited.size() == cities.size();
     }
 
     private static boolean hasCycle(Set<Point2D> cities, Map<Point2D, List<Point2D>> roads) {
