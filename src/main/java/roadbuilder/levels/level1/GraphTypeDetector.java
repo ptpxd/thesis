@@ -2,17 +2,15 @@ package roadbuilder.levels.level1;
 
 import javafx.geometry.Point2D;
 import roadbuilder.model.CityRoadGraphModel;
+import roadbuilder.model.GraphType;
+
 import java.util.*;
 
 public class GraphTypeDetector {
 
-    public enum GraphType {
-        SIMPLE, COMPLETE, BIPARTITE, COMPLEX
-    }
-
     public static GraphType detectGraphType(CityRoadGraphModel graphModel) {
         if (graphModel == null || graphModel.getCities().isEmpty()) {
-            return GraphType.SIMPLE;
+            return GraphType.NONE;
         }
 
         Set<Point2D> cities = graphModel.getCities();
@@ -21,7 +19,7 @@ public class GraphTypeDetector {
 
         // Üres gráf esete
         if (roads.values().stream().allMatch(List::isEmpty)) {
-            return GraphType.SIMPLE;
+            return GraphType.NONE;
         }
 
         // Teljes gráf ellenőrzése
@@ -43,7 +41,6 @@ public class GraphTypeDetector {
         return GraphType.COMPLEX;
     }
 
-    // A többi metódus marad azonos...
     private static boolean isCompleteGraph(Set<Point2D> cities, Map<Point2D, List<Point2D>> roads, int cityCount) {
         if (cityCount <= 1) return true;
 
@@ -158,7 +155,7 @@ public class GraphTypeDetector {
                 if (cycleDFS(neighbor, roads, visited, current)) {
                     return true;
                 }
-            } else if (!neighbor.equals(parent)) {
+            } else if (neighbor != parent) {
                 return true;
             }
         }

@@ -26,6 +26,14 @@ public class ImageLoader {
             new Image(IMAGE_PATH + "diagonal_road_right_to_left.png"));
         tileImages.put(TileType.ROAD_HORIZONTAL,
             new Image(IMAGE_PATH + "two_way_road_horizontal.png"));
+        tileImages.put(TileType.RIGHT_TO_TOP,
+            new Image(IMAGE_PATH + "right_to_up.png"));
+        tileImages.put(TileType.RIGHT_TO_DOWN,
+            new Image(IMAGE_PATH + "right_to_down.png"));
+        tileImages.put(TileType.LEFT_TO_TOP,
+            new Image(IMAGE_PATH + "left_to_up.png"));
+        tileImages.put(TileType.LEFT_TO_DOWN,
+            new Image(IMAGE_PATH + "left_to_down.png"));
 
         // Load button images
         buttonImages.put(ButtonType.PLAY, new Image(IMAGE_PATH + "play_button.png"));

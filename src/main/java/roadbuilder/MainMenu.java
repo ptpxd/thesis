@@ -14,12 +14,16 @@ import roadbuilder.model.CityRoadGraphModel;
 import roadbuilder.util.ImageLoader;
 import roadbuilder.model.ButtonType;
 import roadbuilder.MainGameRunner;
+import roadbuilder.levels.level1.GraphTypeDetector;
+import java.util.List;
+import java.util.ArrayList;
 
 public class MainMenu extends GameApplication {
 
     private CityRoadGraphModel graphModel;
     private ImageView playButton;
     private ImageView exitButton;
+    private List<Integer> completedLevels = new ArrayList<>();
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -72,19 +76,61 @@ public class MainMenu extends GameApplication {
     }
 
     private void showLevelSelectionMenu() {
+        FXGL.getGameScene().clearUINodes();
+
         VBox levelBox = new VBox(10);
         levelBox.setTranslateX(350);
         levelBox.setTranslateY(250);
 
+        // Add levels based on completion
         for (int i = 1; i <= 5; i++) {
             Button levelButton = new Button("Level " + i);
+            levelButton.setDisable(true); // Default disabled
+
+            if (isLevelAvailable(i)) {
+                levelButton.setDisable(false);
+                levelButton.setStyle("-fx-base: #4CAF50;"); // Green color for available levels
+            } else {
+                levelButton.setStyle("-fx-base: #f44336;"); // Red color for locked levels
+                levelButton.setText("Locked");
+            }
+
             int level = i;
-            levelButton.setOnAction(e -> startGame(level));
+            levelButton.setOnAction(e -> {
+                if (!levelButton.isDisabled()) {
+                    startGame(level);
+                    FXGL.getGameScene().clearUINodes();
+                }
+            });
+
+            // Add graph type requirement information
+            String graphType = getRequiredGraphType(level);
+            levelButton.setText("Level " + i + " - " + graphType);
+
             levelBox.getChildren().add(levelButton);
         }
 
-        FXGL.getGameScene().clearUINodes();
+        // Add progress message
+        Button progressButton = new Button("Progress: Level " + getLastCompletedLevel() + " completed");
+        progressButton.setDisable(true);
+        progressButton.setStyle("-fx-base: #2196F3;");
+        levelBox.getChildren().add(progressButton);
+
         FXGL.getGameScene().addUINode(levelBox);
+    }
+
+    private boolean isLevelAvailable(int level) {
+        if (level == 1) {
+            return true; // Level 1 is always available
+        }
+        return completedLevels.contains(level - 1);
+    }
+
+    private int getLastCompletedLevel() {
+        if (completedLevels.isEmpty()) {
+            return 0;
+        }
+        return completedLevels.get(completedLevels.size() - 1);
     }
 
     private void startGame(int level) {
@@ -94,6 +140,30 @@ public class MainMenu extends GameApplication {
         } else {
             System.out.println("Starting game at level " + level);
             // Add logic for other levels if needed
+        }
+    }
+
+    public void markLevelAsCompleted(int level) {
+        if (!completedLevels.contains(level)) {
+            completedLevels.add(level);
+            System.out.println("Level " + level + " completed!");
+        }
+    }
+
+    private String getRequiredGraphType(int level) {
+        switch (level) {
+            case 1:
+                return "Simple Graph";
+            case 2:
+                return "Complete Graph";
+            case 3:
+                return "Bipartite Graph";
+            case 4:
+                return "Complex Graph";
+            case 5:
+                return "Custom Graph";
+            default:
+                return "";
         }
     }
 
