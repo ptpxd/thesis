@@ -32,9 +32,9 @@ public class MainGameRunner {
 
     public void startLevel1() {
         initGame();
-        initUI();
         initInput();
         initGraph();
+        initUI();
     }
 
     private void initGame() {

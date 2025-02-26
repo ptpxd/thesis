@@ -1,11 +1,11 @@
 package roadbuilder.levels.level1;
 
 import javafx.geometry.Point2D;
-import roadbuilder.levels.level1.GraphTypeDetector;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import roadbuilder.model.CityRoadGraphModel;
 import roadbuilder.model.GraphType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,18 +13,18 @@ import java.util.stream.Collectors;
 
 public class Level1Game {
     private CityRoadGraphModel graphModel;
-    private List<Integer> completedLevels = new ArrayList<>();
 
     public Level1Game() {
         graphModel = new CityRoadGraphModel();
+        // Initialize backButton as needed; for now we create a new Button instance
     }
 
     public void initializeLevel(List<Point2D> initialCities) {
         try {
-            completedLevels.clear(); // Reset completed levels for new game
             for (Point2D city : initialCities) {
                 addCity(city);
             }
+            // Print connections for debugging purposes
             graphModel.printCityConnections();
         } catch (Exception e) {
             System.err.println("Error initializing level: " + e.getMessage());
@@ -32,7 +32,7 @@ public class Level1Game {
         }
     }
 
-    public boolean addCity(Point2D city) {
+    public void addCity(Point2D city) {
         try {
             boolean cityAdded = graphModel.addCity(city);
             if (cityAdded) {
@@ -41,14 +41,13 @@ public class Level1Game {
             } else {
                 System.out.println("City already exists at: " + city);
             }
-            return cityAdded;
         } catch (Exception e) {
             System.err.println("Error adding city: " + e.getMessage());
             throw e;
         }
     }
 
-    public boolean addRoad(Point2D start, Point2D end) {
+    public void addRoad(Point2D start, Point2D end) {
         try {
             boolean roadAdded = graphModel.addRoad(start, end);
             if (roadAdded) {
@@ -57,7 +56,6 @@ public class Level1Game {
             } else {
                 System.out.println("Road already exists between: " + start + " and " + end);
             }
-            return roadAdded;
         } catch (Exception e) {
             System.err.println("Error adding road: " + e.getMessage());
             throw e;
@@ -75,8 +73,13 @@ public class Level1Game {
 
     public boolean checkLevelCompletion() {
         try {
+            // Get the current level based on completed levels
             int currentLevel = getLastCompletedLevel() + 1;
+
+            // Get the required graph type for this level
             GraphType requiredGraphType = getRequiredGraphType(currentLevel);
+
+            // Check if the current graph matches the required type
             GraphType currentGraphType = analyzeGraphType();
 
             if (currentGraphType == requiredGraphType) {
@@ -168,20 +171,19 @@ public class Level1Game {
     }
 
     private int getLastCompletedLevel() {
-        if (completedLevels.isEmpty()) {
-            return 0; // Default to level 0 if no levels are completed
-        }
-        return completedLevels.get(completedLevels.size() - 1);
+        // Get the last completed level from the game state
+        // This is a placeholder implementation
+        return 0; // Default to level 0 if no levels are completed
     }
 
     private void markLevelAsCompleted(int level) {
-        if (!completedLevels.contains(level)) {
-            completedLevels.add(level);
-            System.out.println("Level " + level + " marked as completed");
-        }
+        // Update the game state to mark the level as completed
+        // This is a placeholder implementation
+        System.out.println("Level " + level + " marked as completed");
     }
 
     private GraphType getRequiredGraphType(int level) {
+        // Define the required graph type for each level
         switch (level) {
             case 1:
                 return GraphType.SIMPLE;

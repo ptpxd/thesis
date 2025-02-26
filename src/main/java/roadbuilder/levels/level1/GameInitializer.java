@@ -19,10 +19,9 @@ public class GameInitializer {
         }
 
         placeCity(2, 2, cities);
-        placeCity(5, 5, cities);
-        placeCity(7, 7, cities);
-        placeCity(2, 7, cities);
         placeCity(5, 2, cities);
+        placeCity(2, 5, cities);
+        placeCity(5, 5, cities);
 
         FXGL.getWorldProperties().setValue("budget", 10000);
     }
