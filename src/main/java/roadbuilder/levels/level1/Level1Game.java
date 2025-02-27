@@ -1,15 +1,15 @@
 package roadbuilder.levels.level1;
 
-import roadbuilder.app.ProgressManager;
-import roadbuilder.model.CityRoadGraphModel;
-import roadbuilder.model.GraphType;
-import roadbuilder.levels.level1.GraphTypeDetector;
-import javafx.geometry.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javafx.geometry.Point2D;
+import roadbuilder.app.ProgressManager;
+import roadbuilder.model.CityRoadGraphModel;
+import roadbuilder.model.GraphType;
+import roadbuilder.levels.level1.GraphTypeDetector;
 
 public class Level1Game {
     private CityRoadGraphModel graphModel;
@@ -19,6 +19,14 @@ public class Level1Game {
     }
 
     public void initializeLevel(List<Point2D> initialCities) {
+        // Clear the external cities container to prevent duplicate cities on level restart
+        initialCities.clear();
+        // Optionally, add new default cities here. Adjust coordinates as needed.
+        initialCities.add(new Point2D(80, 80));
+        initialCities.add(new Point2D(200, 80));
+        initialCities.add(new Point2D(80, 200));
+        initialCities.add(new Point2D(200, 200));
+
         // Reinitialize the graphModel for a fresh start
         graphModel = new CityRoadGraphModel();
         for (Point2D city : initialCities) {

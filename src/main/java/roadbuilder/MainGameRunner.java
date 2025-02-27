@@ -48,7 +48,8 @@ public class MainGameRunner {
         cities.add(new Point2D(100, 300));
         cities.add(new Point2D(300, 300));
         initGame();
-        level2Game.initializeLevel(cities);
+        // Updated call: remove the 'cities' parameter since Level2Game.initializeLevel() no longer requires it.
+        level2Game.initializeLevel();
         initInput();
         initGraph();
         initUI();

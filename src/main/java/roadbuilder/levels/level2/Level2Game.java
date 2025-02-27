@@ -1,14 +1,15 @@
 package roadbuilder.levels.level2;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javafx.geometry.Point2D;
 import roadbuilder.app.ProgressManager;
 import roadbuilder.model.CityRoadGraphModel;
 import roadbuilder.model.GraphType;
 import roadbuilder.levels.level1.GraphTypeDetector;
+import javafx.geometry.Point2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Level2Game {
     private CityRoadGraphModel graphModel;
@@ -17,8 +18,19 @@ public class Level2Game {
         graphModel = new CityRoadGraphModel();
     }
 
-    public void initializeLevel(List<Point2D> initialCities) {
-        for (Point2D city : initialCities) {
+    public void initializeLevel() {
+        // Clear any previous cities by reinitializing the graph model.
+        clearCities();
+
+        // Define new cities specific to Level2.
+        List<Point2D> freshCities = new ArrayList<>();
+        freshCities.add(new Point2D(100, 100));
+        freshCities.add(new Point2D(300, 100));
+        freshCities.add(new Point2D(100, 300));
+        freshCities.add(new Point2D(300, 300));
+
+        // Add the fresh cities to the new graph model.
+        for (Point2D city : freshCities) {
             addCity(city);
         }
         graphModel.printCityConnections();
@@ -31,6 +43,10 @@ public class Level2Game {
             displayGraphType();
             checkLevelCompletion();
         } else {
+            // Ensure the roads list is not null if the city already exists.
+            if (!graphModel.getRoads().containsKey(city)) {
+                graphModel.getRoads().put(city, new ArrayList<>());
+            }
             System.out.println("Level2 - City already exists at: " + city);
         }
     }
@@ -110,6 +126,7 @@ public class Level2Game {
     }
 
     private GraphType getRequiredGraphType(int level) {
+        // For Level2 the intended requirement is COMPLETE.
         switch (level) {
             case 1:
                 return GraphType.SIMPLE;
@@ -123,6 +140,17 @@ public class Level2Game {
                 return GraphType.COMPLEX;
             default:
                 return GraphType.SIMPLE;
+        }
+    }
+
+    public void clearCities() {
+        graphModel = new CityRoadGraphModel();
+        System.out.println("Level2 - Cities cleared.");
+    }
+
+    public void clearRoads() {
+        for (Point2D city : graphModel.getCities()) {
+            graphModel.getRoads().put(city, new ArrayList<>());
         }
     }
 }
