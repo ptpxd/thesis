@@ -1,26 +1,23 @@
-package roadbuilder.levels.level1;
+package roadbuilder.levels.level2;
 
-import roadbuilder.app.ProgressManager;
-import roadbuilder.model.CityRoadGraphModel;
-import roadbuilder.model.GraphType;
-import roadbuilder.levels.level1.GraphTypeDetector;
-import javafx.geometry.Point2D;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javafx.geometry.Point2D;
+import roadbuilder.app.ProgressManager;
+import roadbuilder.model.CityRoadGraphModel;
+import roadbuilder.model.GraphType;
+import roadbuilder.levels.level1.GraphTypeDetector;
 
-public class Level1Game {
+public class Level2Game {
     private CityRoadGraphModel graphModel;
 
-    public Level1Game() {
+    public Level2Game() {
         graphModel = new CityRoadGraphModel();
     }
 
     public void initializeLevel(List<Point2D> initialCities) {
-        // Reinitialize the graphModel for a fresh start
-        graphModel = new CityRoadGraphModel();
         for (Point2D city : initialCities) {
             addCity(city);
         }
@@ -30,26 +27,22 @@ public class Level1Game {
     public void addCity(Point2D city) {
         boolean added = graphModel.addCity(city);
         if (added) {
-            System.out.println("Level1 - City added at: " + city);
+            System.out.println("Level2 - City added at: " + city);
             displayGraphType();
             checkLevelCompletion();
         } else {
-            // In case the city already exists, ensure its roads list is not null
-            if (!graphModel.getRoads().containsKey(city)) {
-                graphModel.getRoads().put(city, new ArrayList<>());
-            }
-            System.out.println("Level1 - City already exists at: " + city);
+            System.out.println("Level2 - City already exists at: " + city);
         }
     }
 
     public void addRoad(Point2D start, Point2D end) {
         boolean added = graphModel.addRoad(start, end);
         if (added) {
-            System.out.println("Level1 - Road added between: " + start + " and " + end);
+            System.out.println("Level2 - Road added between: " + start + " and " + end);
             displayGraphType();
             checkLevelCompletion();
         } else {
-            System.out.println("Level1 - Road already exists between: " + start + " and " + end);
+            System.out.println("Level2 - Road already exists between: " + start + " and " + end);
         }
     }
 
@@ -67,17 +60,17 @@ public class Level1Game {
         GraphType currentGraphType = analyzeGraphType();
         if (currentGraphType == requiredGraphType) {
             ProgressManager.markLevelAsCompleted(currentLevel);
-            System.out.println("Level1 completed! Required graph type: " + requiredGraphType);
+            System.out.println("Level2 completed! Required graph type: " + requiredGraphType);
             return true;
         } else {
-            System.out.println("Not completed. Current: " + currentGraphType + " Required: " + requiredGraphType);
+            System.out.println("Level2 not completed. Current: " + currentGraphType + " Required: " + requiredGraphType);
             return false;
         }
     }
 
     public void displayGraphType() {
         GraphType graphType = analyzeGraphType();
-        System.out.println("\nLevel1 - Current Graph Type: " + graphType);
+        System.out.println("\nLevel2 - Current Graph Type: " + graphType);
         switch (graphType) {
             case NONE:
                 System.out.println("No cities or roads added yet.");
@@ -130,13 +123,6 @@ public class Level1Game {
                 return GraphType.COMPLEX;
             default:
                 return GraphType.SIMPLE;
-        }
-    }
-
-    public void clearRoads() {
-        // Reset roads for each city to an empty list
-        for (Point2D city : graphModel.getCities()) {
-            graphModel.getRoads().put(city, new ArrayList<>());
         }
     }
 }
