@@ -2,12 +2,13 @@ package roadbuilder.levels.level1;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import roadbuilder.MainMenu;
-import roadbuilder.MainGameRunner;
-import roadbuilder.app.TileComponent;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
+import roadbuilder.MainMenu;
+import roadbuilder.MainGameRunner;
+import roadbuilder.app.TileComponent; // Ensure this import matches your internal module
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,15 +33,23 @@ public class UIManager {
             backButton.setStyle("-fx-background-color: lightgray; -fx-font-size: 14px;");
         });
         backButton.setOnMouseClicked((MouseEvent event) -> {
-            List<Entity> currentEntities = new ArrayList<>(FXGL.getGameWorld().getEntities());
-            currentEntities.stream()
+            triggerBackButton();
+        });
+        Platform.runLater(() -> FXGL.getGameScene().addUINode(backButton));
+    }
+
+    /**
+     * Triggers the back button action.
+     * Removes board-related entities, clears roads, and redirects to the level selection menu.
+     */
+    public void triggerBackButton() {
+        List<Entity> currentEntities = new ArrayList<>(FXGL.getGameWorld().getEntities());
+        currentEntities.stream()
                 .filter(Objects::nonNull)
                 .filter(entity -> entity.hasComponent(TileComponent.class))
                 .forEach(entity -> FXGL.getGameWorld().removeEntity(entity));
-            MainGameRunner.getInstance().clearRoads();
-            MainMenu.getInstance().showLevelSelectionMenu();
-            System.out.println("Back button clicked: Navigated to level selection menu and removed game board tiles.");
-        });
-        Platform.runLater(() -> FXGL.getGameScene().addUINode(backButton));
+        MainGameRunner.getInstance().clearRoads();
+        MainMenu.getInstance().showLevelSelectionMenu();
+        System.out.println("UIManager - triggerBackButton executed: Navigated to level selection menu and removed board tiles.");
     }
 }

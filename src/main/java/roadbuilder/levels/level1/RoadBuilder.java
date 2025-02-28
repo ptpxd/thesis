@@ -9,6 +9,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+
 import java.util.List;
 import java.util.Set;
 
@@ -17,7 +18,6 @@ public class RoadBuilder {
 
     public static void buildRoad(Point2D start, Point2D end, Set<String> roads, List<Point2D> cities, Level1Game level1Game) {
         // Use the provided Level1Game instance to handle road addition
-        level1Game.addRoad(start, end);
 
         int x0 = (int) start.getX() / TILE_SIZE;
         int y0 = (int) start.getY() / TILE_SIZE;
@@ -64,6 +64,7 @@ public class RoadBuilder {
                 }
             }
         }
+        level1Game.addRoad(start, end);
     }
 
     private static boolean isCityTile(int x, int y, List<Point2D> cities) {

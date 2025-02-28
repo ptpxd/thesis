@@ -6,9 +6,10 @@ import com.almasb.fxgl.dsl.FXGL;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import roadbuilder.model.ButtonType;
-import roadbuilder.util.ImageLoader;
 import roadbuilder.app.ProgressManager;
+import roadbuilder.levels.level1.UIManager;
+import roadbuilder.util.ImageLoader;
+import roadbuilder.model.ButtonType;
 
 public class MainMenu extends GameApplication {
     private static MainMenu instance;
@@ -60,26 +61,33 @@ public class MainMenu extends GameApplication {
         levelBox.setTranslateX(350);
         levelBox.setTranslateY(250);
 
+        // Create buttons for levels 1 to 5.
         for (int i = 1; i <= 5; i++) {
             Button levelButton = new Button();
-            if (isLevelAvailable(i)) {
+            // If the level is already completed, disable the button and mark it as locked.
+            if (i <= ProgressManager.getHighestCompletedLevel()) {
+                levelButton.setDisable(true);
+                levelButton.setStyle("-fx-base: #f44336;");
+                levelButton.setText("Level " + i + " - Locked (Teljesítve)");
+            }
+            // Else, if the level is available (unlocked), enable it.
+            else if (isLevelAvailable(i)) {
                 levelButton.setDisable(false);
                 levelButton.setStyle("-fx-base: #4CAF50;");
+                String graphType = getRequiredGraphType(i);
+                levelButton.setText("Level " + i + " - " + graphType);
+                int level = i;
+                levelButton.setOnAction(e -> {
+                    if (!levelButton.isDisabled()) {
+                        FXGL.getGameScene().clearUINodes();
+                        startGame(level);
+                    }
+                });
             } else {
                 levelButton.setDisable(true);
                 levelButton.setStyle("-fx-base: #f44336;");
-                levelButton.setText("Locked");
+                levelButton.setText("Level " + i + " - Locked");
             }
-            int level = i;
-            levelButton.setOnAction(e -> {
-                if (!levelButton.isDisabled()) {
-                    FXGL.getGameScene().clearUINodes();
-                    startGame(level);
-                }
-            });
-            String graphType = getRequiredGraphType(i);
-            levelButton.setText("Level " + i + " - " + graphType +
-                (ProgressManager.getHighestCompletedLevel() >= i ? " (Completed)" : ""));
             levelBox.getChildren().add(levelButton);
         }
 
@@ -92,21 +100,21 @@ public class MainMenu extends GameApplication {
     }
 
     private boolean isLevelAvailable(int level) {
-        return level == 1 || ProgressManager.isLevelUnlocked(level);
+        // Level 1 is always available; for other levels, they must be unlocked but not already completed.
+        return level == 1 || (ProgressManager.isLevelUnlocked(level) && level > ProgressManager.getHighestCompletedLevel());
     }
 
     private void startGame(int level) {
+        FXGL.getGameScene().clearUINodes();
         if (level == 1) {
             System.out.println("Starting Level 1");
-            FXGL.getGameScene().clearUINodes();
             MainGameRunner.getInstance().startLevel1();
         } else if (level == 2) {
             System.out.println("Starting Level 2");
-            FXGL.getGameScene().clearUINodes();
             MainGameRunner.getInstance().startLevel2();
         } else {
             System.out.println("Starting game at level " + level);
-            FXGL.getGameScene().clearUINodes();
+            // Add additional level start logic if needed.
         }
     }
 
