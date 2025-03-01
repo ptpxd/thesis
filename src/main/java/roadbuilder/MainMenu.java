@@ -3,13 +3,12 @@ package roadbuilder;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
-import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import roadbuilder.app.ProgressManager;
-import roadbuilder.levels.level1.UIManager;
+import javafx.scene.control.Button;
 import roadbuilder.util.ImageLoader;
 import roadbuilder.model.ButtonType;
+import roadbuilder.app.ProgressManager;
 
 public class MainMenu extends GameApplication {
     private static MainMenu instance;
@@ -32,6 +31,11 @@ public class MainMenu extends GameApplication {
 
     @Override
     protected void initUI() {
+        // Create background image view
+        ImageView background = new ImageView(ImageLoader.getBackgroundImage());
+        background.setFitWidth(800);
+        background.setFitHeight(600);
+
         VBox menuBox = new VBox(10);
         menuBox.setTranslateX(350);
         menuBox.setTranslateY(250);
@@ -52,6 +56,9 @@ public class MainMenu extends GameApplication {
         exitButton.setOnMouseClicked(event -> System.exit(0));
 
         menuBox.getChildren().addAll(playButton, exitButton);
+
+        // Add background and menuBox to the scene
+        FXGL.getGameScene().addUINode(background);
         FXGL.getGameScene().addUINode(menuBox);
     }
 

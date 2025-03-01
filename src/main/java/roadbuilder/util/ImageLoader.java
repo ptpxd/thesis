@@ -13,6 +13,7 @@ public class ImageLoader {
 
     private static final Map<TileType, Image> tileImages = new EnumMap<>(TileType.class);
     private static final Map<ButtonType, Image> buttonImages = new EnumMap<>(ButtonType.class);
+    private static Image backgroundImage;
 
     static {
         // Load tile images
@@ -35,11 +36,24 @@ public class ImageLoader {
         tileImages.put(TileType.LEFT_TO_DOWN,
             new Image(IMAGE_PATH + "left_to_down.png"));
 
+        // Load new city tile images
+        tileImages.put(TileType.CITY_1, new Image(IMAGE_PATH + "city_1.png"));
+        tileImages.put(TileType.CITY_2, new Image(IMAGE_PATH + "city_2.png"));
+        tileImages.put(TileType.CITY_3, new Image(IMAGE_PATH + "city_3.png"));
+        tileImages.put(TileType.CITY_4, new Image(IMAGE_PATH + "city_4.png"));
+        tileImages.put(TileType.CITY_5, new Image(IMAGE_PATH + "city_5.png"));
+        tileImages.put(TileType.CITY_6, new Image(IMAGE_PATH + "city_6.png"));
+        tileImages.put(TileType.CITY_7, new Image(IMAGE_PATH + "city_7.png"));
+        tileImages.put(TileType.CITY_8, new Image(IMAGE_PATH + "city_8.png"));
+
         // Load button images
         buttonImages.put(ButtonType.PLAY, new Image(IMAGE_PATH + "play_button.png"));
         buttonImages.put(ButtonType.PLAY_HOVER, new Image(IMAGE_PATH + "play_button_hover.png"));
         buttonImages.put(ButtonType.EXIT, new Image(IMAGE_PATH + "exit_button.png"));
         buttonImages.put(ButtonType.EXIT_HOVER, new Image(IMAGE_PATH + "exit_button_hover.png"));
+
+        // Load background image
+        backgroundImage = new Image(IMAGE_PATH + "background.png");
     }
 
     public static Image getImage(TileType type) {
@@ -48,5 +62,9 @@ public class ImageLoader {
 
     public static Image getButtonImage(ButtonType type) {
         return buttonImages.getOrDefault(type, null);
+    }
+
+    public static Image getBackgroundImage() {
+        return backgroundImage;
     }
 }
