@@ -49,6 +49,11 @@ public class ImageLoader {
         // Load button images
         buttonImages.put(ButtonType.PLAY, new Image(IMAGE_PATH + "play_button.png"));
         buttonImages.put(ButtonType.PLAY_HOVER, new Image(IMAGE_PATH + "play_button_hover.png"));
+
+        // Insert SETTINGS button images between PLAY and EXIT
+        buttonImages.put(ButtonType.SETTINGS, new Image(IMAGE_PATH + "settings_button.png"));
+        buttonImages.put(ButtonType.SETTINGS_HOVER, new Image(IMAGE_PATH + "settings_button_hover.png"));
+
         buttonImages.put(ButtonType.EXIT, new Image(IMAGE_PATH + "exit_button.png"));
         buttonImages.put(ButtonType.EXIT_HOVER, new Image(IMAGE_PATH + "exit_button_hover.png"));
 
