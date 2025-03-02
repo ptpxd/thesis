@@ -4,5 +4,7 @@ public enum ButtonType {
     PLAY,
     PLAY_HOVER,
     EXIT,
-    EXIT_HOVER
+    EXIT_HOVER,
+    SETTINGS,
+    SETTINGS_HOVER
 }
