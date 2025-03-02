@@ -5,30 +5,28 @@ import com.almasb.fxgl.input.UserAction;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-
+import javafx.scene.input.MouseEvent;
+import roadbuilder.util.Point2DUtil;
 import java.util.List;
 import java.util.Set;
 
 public class InputHandler {
-    private int budget;
+
     private Point2D firstCityClicked = null;
     private Level1Game level1Game;
+    private boolean inputInitialized = false;
 
-    public InputHandler(int initialBudget, Level1Game level1Game) {
-        this.budget = initialBudget;
+    public InputHandler(Level1Game level1Game) {
         this.level1Game = level1Game;
     }
 
     public void initInput(List<Point2D> cities, Set<String> roads) {
-        FXGL.getInput().addAction(new UserAction("Increase Budget") {
-            @Override
-            protected void onActionBegin() {
-                budget += 100;
-                FXGL.getWorldProperties().setValue("budget", budget);
-            }
-        }, KeyCode.B);
+        if (inputInitialized) {
+            return;
+        }
+        inputInitialized = true;
 
-        FXGL.getInput().addEventHandler(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> {
+        FXGL.getInput().addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 Point2D clickPoint = new Point2D(event.getSceneX(), event.getSceneY());
                 cities.stream()
@@ -51,12 +49,7 @@ public class InputHandler {
             firstCityClicked = city;
         } else {
             if (!city.equals(firstCityClicked) && !isRoadExists(firstCityClicked, city, roads)) {
-                int cost = calculateRoadCost(firstCityClicked, city);
-                if (budget >= cost) {
-                    RoadBuilder.buildRoad(firstCityClicked, city, roads, cities, level1Game);
-                    budget -= cost;
-                    FXGL.getWorldProperties().setValue("budget", budget);
-                }
+                RoadBuilder.buildRoad(firstCityClicked, city, roads, cities, level1Game);
             }
             firstCityClicked = null;
         }
@@ -66,9 +59,5 @@ public class InputHandler {
         String roadKey = start.toString() + "-" + end.toString();
         String reverseRoadKey = end.toString() + "-" + start.toString();
         return roads.contains(roadKey) || roads.contains(reverseRoadKey);
-    }
-
-    private int calculateRoadCost(Point2D start, Point2D end) {
-        return (int) start.distance(end) * 10;
     }
 }

@@ -9,6 +9,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+
 import java.util.List;
 import java.util.Set;
 
@@ -16,16 +17,22 @@ public class RoadBuilder {
     private static final int TILE_SIZE = 40;
 
     public static void buildRoad(Point2D start, Point2D end, Set<String> roads, List<Point2D> cities, Level1Game level1Game) {
-        // Use the provided Level1Game instance to handle road addition
-        level1Game.addRoad(start, end);
-
         int x0 = (int) start.getX() / TILE_SIZE;
         int y0 = (int) start.getY() / TILE_SIZE;
         int x1 = (int) end.getX() / TILE_SIZE;
         int y1 = (int) end.getY() / TILE_SIZE;
 
+        // Update the starting city tile if applicable
+        if (isCityTile(x0, y0, cities)) {
+            updateCityTile(x0, y0);
+        }
+
+        // Update the ending city tile if applicable
+        if (isCityTile(x1, y1, cities)) {
+            updateCityTile(x1, y1);
+        }
+
         if (x0 == x1) {
-            // Vertical road
             while (y0 != y1) {
                 if (!isCityTile(x0, y0, cities)) {
                     placeRoadSegment(x0, y0, false, 0, y0 < y1 ? 1 : -1);
@@ -33,7 +40,6 @@ public class RoadBuilder {
                 y0 += y0 < y1 ? 1 : -1;
             }
         } else if (y0 == y1) {
-            // Horizontal road
             while (x0 != x1) {
                 if (!isCityTile(x0, y0, cities)) {
                     placeRoadSegment(x0, y0, false, x0 < x1 ? 1 : -1, 0);
@@ -41,7 +47,6 @@ public class RoadBuilder {
                 x0 += x0 < x1 ? 1 : -1;
             }
         } else {
-            // Diagonal or mixed path
             int dx = Math.abs(x1 - x0);
             int dy = Math.abs(y1 - y0);
             int sx = x0 < x1 ? 1 : -1;
@@ -64,6 +69,7 @@ public class RoadBuilder {
                 }
             }
         }
+        level1Game.addRoad(start, end);
     }
 
     private static boolean isCityTile(int x, int y, List<Point2D> cities) {
@@ -95,5 +101,36 @@ public class RoadBuilder {
                 .view(imageView)
                 .with(new TileComponent(roadType))
                 .buildAndAttach();
+    }
+
+    private static void updateCityTile(int x, int y) {
+        Point2D cityPoint = new Point2D(x * TILE_SIZE, y * TILE_SIZE);
+        FXGL.getGameWorld().getEntitiesAt(cityPoint).stream()
+            .filter(entity -> entity.hasComponent(TileComponent.class))
+            .forEach(entity -> {
+                TileComponent tileComponent = entity.getComponent(TileComponent.class);
+                TileType currentType = tileComponent.getTileType();
+                TileType newType = getNextCityType(currentType);
+                tileComponent.setTileType(newType);
+                entity.getViewComponent().clearChildren();
+                ImageView newImageView = new ImageView(ImageLoader.getImage(newType));
+                newImageView.setFitWidth(TILE_SIZE);
+                newImageView.setFitHeight(TILE_SIZE);
+                entity.getViewComponent().addChild(newImageView);
+            });
+    }
+
+    private static TileType getNextCityType(TileType currentType) {
+        switch (currentType) {
+            case CITY: return TileType.CITY_1;
+            case CITY_1: return TileType.CITY_2;
+            case CITY_2: return TileType.CITY_3;
+            case CITY_3: return TileType.CITY_4;
+            case CITY_4: return TileType.CITY_5;
+            case CITY_5: return TileType.CITY_6;
+            case CITY_6: return TileType.CITY_7;
+            case CITY_7: return TileType.CITY_8;
+            default: return currentType;
+        }
     }
 }

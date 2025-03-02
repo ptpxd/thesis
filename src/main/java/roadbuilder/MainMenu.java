@@ -3,15 +3,24 @@ package roadbuilder;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
-import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.geometry.Point2D;
-import roadbuilder.model.CityRoadGraphModel;
-import roadbuilder.MainGameRunner;
+import javafx.scene.control.Button;
+import roadbuilder.util.ImageLoader;
+import roadbuilder.model.ButtonType;
+import roadbuilder.app.ProgressManager;
 
 public class MainMenu extends GameApplication {
+    private static MainMenu instance;
+    private ImageView playButton;
+    private ImageView exitButton;
 
-    private CityRoadGraphModel graphModel;
+    public static MainMenu getInstance() {
+        if (instance == null) {
+            instance = new MainMenu();
+        }
+        return instance;
+    }
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -22,42 +31,114 @@ public class MainMenu extends GameApplication {
 
     @Override
     protected void initUI() {
-        graphModel = new CityRoadGraphModel();
+        // Create background image view
+        ImageView background = new ImageView(ImageLoader.getBackgroundImage());
+        background.setFitWidth(800);
+        background.setFitHeight(600);
 
         VBox menuBox = new VBox(10);
         menuBox.setTranslateX(350);
         menuBox.setTranslateY(250);
 
-        Button startButton = new Button("Start Game");
-        startButton.setOnAction(e -> showLevelSelectionMenu());
+        playButton = new ImageView(ImageLoader.getButtonImage(ButtonType.PLAY));
+        playButton.setOnMouseEntered(event -> playButton.setImage(ImageLoader.getButtonImage(ButtonType.PLAY_HOVER)));
+        playButton.setOnMouseExited(event -> playButton.setImage(ImageLoader.getButtonImage(ButtonType.PLAY)));
 
-        menuBox.getChildren().addAll(startButton);
+        exitButton = new ImageView(ImageLoader.getButtonImage(ButtonType.EXIT));
+        exitButton.setTranslateY(-10);
+        exitButton.setOnMouseEntered(event -> exitButton.setImage(ImageLoader.getButtonImage(ButtonType.EXIT_HOVER)));
+        exitButton.setOnMouseExited(event -> exitButton.setImage(ImageLoader.getButtonImage(ButtonType.EXIT)));
+
+        playButton.setOnMouseClicked(event -> {
+            FXGL.getGameScene().clearUINodes();
+            showLevelSelectionMenu();
+        });
+        exitButton.setOnMouseClicked(event -> System.exit(0));
+
+        menuBox.getChildren().addAll(playButton, exitButton);
+
+        // Add background and menuBox to the scene
+        FXGL.getGameScene().addUINode(background);
         FXGL.getGameScene().addUINode(menuBox);
     }
 
-    private void showLevelSelectionMenu() {
+    public void showLevelSelectionMenu() {
+        FXGL.getGameScene().clearUINodes();
         VBox levelBox = new VBox(10);
         levelBox.setTranslateX(350);
         levelBox.setTranslateY(250);
 
+        // Create buttons for levels 1 to 5.
         for (int i = 1; i <= 5; i++) {
-            Button levelButton = new Button("Level " + i);
-            int level = i;
-            levelButton.setOnAction(e -> startGame(level));
+            Button levelButton = new Button();
+            // If the level is already completed, disable the button and mark it as locked.
+            if (i <= ProgressManager.getHighestCompletedLevel()) {
+                levelButton.setDisable(true);
+                levelButton.setStyle("-fx-base: #f44336;");
+                levelButton.setText("Level " + i + " - Locked (Teljesítve)");
+            }
+            // Else, if the level is available (unlocked), enable it.
+            else if (isLevelAvailable(i)) {
+                levelButton.setDisable(false);
+                levelButton.setStyle("-fx-base: #4CAF50;");
+                String graphType = getRequiredGraphType(i);
+                levelButton.setText("Level " + i + " - " + graphType);
+                int level = i;
+                levelButton.setOnAction(e -> {
+                    if (!levelButton.isDisabled()) {
+                        FXGL.getGameScene().clearUINodes();
+                        startGame(level);
+                    }
+                });
+            } else {
+                levelButton.setDisable(true);
+                levelButton.setStyle("-fx-base: #f44336;");
+                levelButton.setText("Level " + i + " - Locked");
+            }
             levelBox.getChildren().add(levelButton);
         }
 
-        FXGL.getGameScene().clearUINodes();
+        Button progressButton = new Button("Progress: Level " + ProgressManager.getHighestCompletedLevel() + " completed");
+        progressButton.setDisable(true);
+        progressButton.setStyle("-fx-base: #2196F3;");
+        levelBox.getChildren().add(progressButton);
+
         FXGL.getGameScene().addUINode(levelBox);
     }
 
+    private boolean isLevelAvailable(int level) {
+        // Level 1 is always available; for other levels, they must be unlocked but not already completed.
+        return level == 1 || (ProgressManager.isLevelUnlocked(level) && level > ProgressManager.getHighestCompletedLevel());
+    }
+
     private void startGame(int level) {
+        FXGL.getGameScene().clearUINodes();
         if (level == 1) {
             System.out.println("Starting Level 1");
             MainGameRunner.getInstance().startLevel1();
+        } else if (level == 2) {
+            System.out.println("Starting Level 2");
+            MainGameRunner.getInstance().startLevel2();
         } else {
             System.out.println("Starting game at level " + level);
-            // Add logic for other levels if needed
+            // Add additional level start logic if needed.
+        }
+    }
+
+    private String getRequiredGraphType(int level) {
+        switch (level) {
+            case 1:
+                return "Simple Graph";
+            case 2:
+                return "Complete Graph";
+            case 3:
+                return "Bipartite Graph";
+            case 4:
+                return "Complex Graph";
+            case 5:
+                return "Custom Graph";
+            default:
+                return "";
         }
     }
 
