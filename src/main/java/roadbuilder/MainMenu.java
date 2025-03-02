@@ -3,16 +3,21 @@ package roadbuilder;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.Button;
-import roadbuilder.util.ImageLoader;
 import roadbuilder.model.ButtonType;
+import roadbuilder.util.ImageLoader;
 import roadbuilder.app.ProgressManager;
 
+/**
+ * MainMenu class implements the main menu UI with adjusted button placement.
+ * The buttons (Play, Settings, Exit) are positioned a bit higher than before.
+ */
 public class MainMenu extends GameApplication {
     private static MainMenu instance;
     private ImageView playButton;
+    private ImageView settingsButton;
     private ImageView exitButton;
 
     public static MainMenu getInstance() {
@@ -37,25 +42,39 @@ public class MainMenu extends GameApplication {
         background.setFitHeight(600);
 
         VBox menuBox = new VBox(10);
+        // Adjusted position: move the menu a bit higher (translateY decreased from 200 to 170)
         menuBox.setTranslateX(350);
-        menuBox.setTranslateY(250);
+        menuBox.setTranslateY(170);
 
+        // Initialize Play button with hover effects
         playButton = new ImageView(ImageLoader.getButtonImage(ButtonType.PLAY));
         playButton.setOnMouseEntered(event -> playButton.setImage(ImageLoader.getButtonImage(ButtonType.PLAY_HOVER)));
         playButton.setOnMouseExited(event -> playButton.setImage(ImageLoader.getButtonImage(ButtonType.PLAY)));
 
+        // Initialize Settings button with hover effects
+        settingsButton = new ImageView(ImageLoader.getButtonImage(ButtonType.SETTINGS));
+        settingsButton.setOnMouseEntered(event -> settingsButton.setImage(ImageLoader.getButtonImage(ButtonType.SETTINGS_HOVER)));
+        settingsButton.setOnMouseExited(event -> settingsButton.setImage(ImageLoader.getButtonImage(ButtonType.SETTINGS)));
+        // Settings button click action
+        settingsButton.setOnMouseClicked(event -> {
+            System.out.println("Settings button clicked.");
+        });
+
+        // Initialize Exit button with hover effects
         exitButton = new ImageView(ImageLoader.getButtonImage(ButtonType.EXIT));
         exitButton.setTranslateY(-10);
         exitButton.setOnMouseEntered(event -> exitButton.setImage(ImageLoader.getButtonImage(ButtonType.EXIT_HOVER)));
         exitButton.setOnMouseExited(event -> exitButton.setImage(ImageLoader.getButtonImage(ButtonType.EXIT)));
 
+        // Set actions for Play and Exit buttons
         playButton.setOnMouseClicked(event -> {
             FXGL.getGameScene().clearUINodes();
             showLevelSelectionMenu();
         });
         exitButton.setOnMouseClicked(event -> System.exit(0));
 
-        menuBox.getChildren().addAll(playButton, exitButton);
+        // Add Play, Settings, and Exit buttons to the menuBox in order
+        menuBox.getChildren().addAll(playButton, settingsButton, exitButton);
 
         // Add background and menuBox to the scene
         FXGL.getGameScene().addUINode(background);
@@ -121,7 +140,7 @@ public class MainMenu extends GameApplication {
             MainGameRunner.getInstance().startLevel2();
         } else {
             System.out.println("Starting game at level " + level);
-            // Add additional level start logic if needed.
+            // Additional logic for starting the level can be added here.
         }
     }
 
