@@ -9,6 +9,7 @@ import javafx.scene.layout.VBox;
 import roadbuilder.model.ButtonType;
 import roadbuilder.util.ImageLoader;
 import roadbuilder.app.ProgressManager;
+import roadbuilder.util.SoundManager;
 
 /**
  * MainMenu class implements the main menu UI with adjusted button placement.
@@ -79,6 +80,13 @@ public class MainMenu extends GameApplication {
         // Add background and menuBox to the scene
         FXGL.getGameScene().addUINode(background);
         FXGL.getGameScene().addUINode(menuBox);
+    }
+
+    @Override
+    protected void initGame() {
+        // Initialize and play background music
+        SoundManager soundManager = SoundManager.getInstance();
+        soundManager.playBackgroundMusic();
     }
 
     public void showLevelSelectionMenu() {
