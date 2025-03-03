@@ -56,9 +56,9 @@ public class MainMenu extends GameApplication {
         settingsButton = new ImageView(ImageLoader.getButtonImage(ButtonType.SETTINGS));
         settingsButton.setOnMouseEntered(event -> settingsButton.setImage(ImageLoader.getButtonImage(ButtonType.SETTINGS_HOVER)));
         settingsButton.setOnMouseExited(event -> settingsButton.setImage(ImageLoader.getButtonImage(ButtonType.SETTINGS)));
-        // Settings button click action
+        // When the settings button is clicked, show the Settings Menu.
         settingsButton.setOnMouseClicked(event -> {
-            System.out.println("Settings button clicked.");
+            roadbuilder.SettingsMenu.show();
         });
 
         // Initialize Exit button with hover effects
@@ -91,6 +91,7 @@ public class MainMenu extends GameApplication {
 
     public void showLevelSelectionMenu() {
         FXGL.getGameScene().clearUINodes();
+
         VBox levelBox = new VBox(10);
         levelBox.setTranslateX(350);
         levelBox.setTranslateY(250);
@@ -130,7 +131,19 @@ public class MainMenu extends GameApplication {
         progressButton.setStyle("-fx-base: #2196F3;");
         levelBox.getChildren().add(progressButton);
 
+        // Create Back to Menu button positioned at the top-right corner.
+        Button backToMenuButton = new Button("Back to Menu");
+        backToMenuButton.setStyle("-fx-base: #009688;");
+        // Position the button at top-right, absolute coordinates.
+        backToMenuButton.setTranslateX(700);
+        backToMenuButton.setTranslateY(20);
+        backToMenuButton.setOnAction(e -> {
+            FXGL.getGameScene().clearUINodes();
+            initUI();
+        });
+
         FXGL.getGameScene().addUINode(levelBox);
+        FXGL.getGameScene().addUINode(backToMenuButton);
     }
 
     private boolean isLevelAvailable(int level) {

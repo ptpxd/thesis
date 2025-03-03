@@ -2,8 +2,6 @@ package roadbuilder.util;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,5 +47,24 @@ public class SoundManager {
         if (backgroundMusicPlayer != null) {
             backgroundMusicPlayer.stop();
         }
+    }
+
+    // New method to set the volume of the background music.
+    // The volume value should be between 0.0 (mute) and 1.0 (max volume)
+    public void setVolume(double volume) {
+        if (backgroundMusicPlayer != null) {
+            if (volume < 0.0 || volume > 1.0) {
+                throw new IllegalArgumentException("Volume must be between 0.0 and 1.0");
+            }
+            backgroundMusicPlayer.setVolume(volume);
+        }
+    }
+
+    // New method to get the current volume of the background music.
+    public double getVolume() {
+        if (backgroundMusicPlayer != null) {
+            return backgroundMusicPlayer.getVolume();
+        }
+        return 0.0;
     }
 }
