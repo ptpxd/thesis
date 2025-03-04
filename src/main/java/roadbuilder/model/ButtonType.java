@@ -6,5 +6,7 @@ public enum ButtonType {
     EXIT,
     EXIT_HOVER,
     SETTINGS,
-    SETTINGS_HOVER
+    SETTINGS_HOVER,
+    SOUND,
+    SOUND_MUTED
 }

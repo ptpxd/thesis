@@ -49,7 +49,7 @@ public class SoundManager {
         }
     }
 
-    // New method to set the volume of the background music.
+    // Sets the volume of the background music.
     // The volume value should be between 0.0 (mute) and 1.0 (max volume)
     public void setVolume(double volume) {
         if (backgroundMusicPlayer != null) {
@@ -60,11 +60,21 @@ public class SoundManager {
         }
     }
 
-    // New method to get the current volume of the background music.
+    // Returns the current volume of the background music.
     public double getVolume() {
         if (backgroundMusicPlayer != null) {
             return backgroundMusicPlayer.getVolume();
         }
         return 0.0;
+    }
+
+    // New method to mute the background music.
+    public void muteSound() {
+        setVolume(0.0);
+    }
+
+    // New method to unmute the background music (sets volume to maximum).
+    public void unMuteSound() {
+        setVolume(1.0);
     }
 }

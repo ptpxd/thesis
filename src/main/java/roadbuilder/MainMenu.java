@@ -13,13 +13,16 @@ import roadbuilder.util.SoundManager;
 
 /**
  * MainMenu class implements the main menu UI with adjusted button placement.
- * The buttons (Play, Settings, Exit) are positioned a bit higher than before.
+ * The buttons (Play, Settings, Exit) are positioned accordingly.
+ * A SOUND toggle button is placed in the bottom-right corner. On click it toggles between mute and unmute.
  */
 public class MainMenu extends GameApplication {
     private static MainMenu instance;
     private ImageView playButton;
     private ImageView settingsButton;
     private ImageView exitButton;
+    private ImageView soundButton;
+    private boolean soundMuted = false;
 
     public static MainMenu getInstance() {
         if (instance == null) {
@@ -36,14 +39,15 @@ public class MainMenu extends GameApplication {
     }
 
     @Override
-    protected void initUI() {
-        // Create background image view
+    public void initUI() {
+        // Create background image view for main menu
         ImageView background = new ImageView(ImageLoader.getBackgroundImage());
         background.setFitWidth(800);
         background.setFitHeight(600);
 
+        // Create a VBox container for menu buttons (Play, Settings, Exit)
         VBox menuBox = new VBox(10);
-        // Adjusted position: move the menu a bit higher (translateY decreased from 200 to 170)
+        // Position the menu box
         menuBox.setTranslateX(350);
         menuBox.setTranslateY(170);
 
@@ -51,12 +55,16 @@ public class MainMenu extends GameApplication {
         playButton = new ImageView(ImageLoader.getButtonImage(ButtonType.PLAY));
         playButton.setOnMouseEntered(event -> playButton.setImage(ImageLoader.getButtonImage(ButtonType.PLAY_HOVER)));
         playButton.setOnMouseExited(event -> playButton.setImage(ImageLoader.getButtonImage(ButtonType.PLAY)));
+        playButton.setOnMouseClicked(event -> {
+            FXGL.getGameScene().clearUINodes();
+            showLevelSelectionMenu();
+        });
 
         // Initialize Settings button with hover effects
         settingsButton = new ImageView(ImageLoader.getButtonImage(ButtonType.SETTINGS));
         settingsButton.setOnMouseEntered(event -> settingsButton.setImage(ImageLoader.getButtonImage(ButtonType.SETTINGS_HOVER)));
         settingsButton.setOnMouseExited(event -> settingsButton.setImage(ImageLoader.getButtonImage(ButtonType.SETTINGS)));
-        // When the settings button is clicked, show the Settings Menu.
+        // Show settings menu on click
         settingsButton.setOnMouseClicked(event -> {
             roadbuilder.SettingsMenu.show();
         });
@@ -66,25 +74,50 @@ public class MainMenu extends GameApplication {
         exitButton.setTranslateY(-10);
         exitButton.setOnMouseEntered(event -> exitButton.setImage(ImageLoader.getButtonImage(ButtonType.EXIT_HOVER)));
         exitButton.setOnMouseExited(event -> exitButton.setImage(ImageLoader.getButtonImage(ButtonType.EXIT)));
-
-        // Set actions for Play and Exit buttons
-        playButton.setOnMouseClicked(event -> {
-            FXGL.getGameScene().clearUINodes();
-            showLevelSelectionMenu();
-        });
         exitButton.setOnMouseClicked(event -> System.exit(0));
 
-        // Add Play, Settings, and Exit buttons to the menuBox in order
+        // Add Play, Settings, and Exit buttons to the container
         menuBox.getChildren().addAll(playButton, settingsButton, exitButton);
 
-        // Add background and menuBox to the scene
+        // Initialize SOUND toggle button
+        initSoundButton();
+
+        // Add background, the menu container, and the SOUND button to the scene
         FXGL.getGameScene().addUINode(background);
         FXGL.getGameScene().addUINode(menuBox);
+        FXGL.getGameScene().addUINode(soundButton);
+    }
+
+    // Helper to (re)initialize the soundButton.
+    private void initSoundButton() {
+        soundButton = new ImageView(ImageLoader.getButtonImage(ButtonType.SOUND));
+        // Set preferred size for the sound button (assumption 50x50)
+        soundButton.setFitWidth(50);
+        soundButton.setFitHeight(50);
+        // Ensure the entire rectangular area is clickable even if parts are transparent.
+        soundButton.setPickOnBounds(true);
+        // Position the SOUND button in the bottom-right corner with a 10px margin:
+        // x = 800 - 50 - 10 = 740, y = 600 - 50 - 10 = 540
+        soundButton.setTranslateX(740);
+        soundButton.setTranslateY(540);
+        // Set on-click event to toggle sound state using muteSound() and unMuteSound() methods.
+        soundButton.setOnMouseClicked(event -> {
+            SoundManager soundManager = SoundManager.getInstance();
+            if (!soundMuted) {
+                soundManager.muteSound();
+                soundButton.setImage(ImageLoader.getButtonImage(ButtonType.SOUND_MUTED));
+                soundMuted = true;
+            } else {
+                soundManager.unMuteSound();
+                soundButton.setImage(ImageLoader.getButtonImage(ButtonType.SOUND));
+                soundMuted = false;
+            }
+        });
     }
 
     @Override
     protected void initGame() {
-        // Initialize and play background music
+        // Start background music
         SoundManager soundManager = SoundManager.getInstance();
         soundManager.playBackgroundMusic();
     }
@@ -92,31 +125,32 @@ public class MainMenu extends GameApplication {
     public void showLevelSelectionMenu() {
         FXGL.getGameScene().clearUINodes();
 
+        // Create background image for level menu using levelMenuBackgroundImage
+        ImageView levelBackground = new ImageView(ImageLoader.getLevelMenuBackgroundImage());
+        levelBackground.setFitWidth(800);
+        levelBackground.setFitHeight(600);
+
+        // Container for level selection buttons
         VBox levelBox = new VBox(10);
         levelBox.setTranslateX(350);
         levelBox.setTranslateY(250);
 
-        // Create buttons for levels 1 to 5.
         for (int i = 1; i <= 5; i++) {
             Button levelButton = new Button();
-            // If the level is already completed, disable the button and mark it as locked.
+            // Set button state based on level progression
             if (i <= ProgressManager.getHighestCompletedLevel()) {
                 levelButton.setDisable(true);
                 levelButton.setStyle("-fx-base: #f44336;");
                 levelButton.setText("Level " + i + " - Locked (Teljesítve)");
-            }
-            // Else, if the level is available (unlocked), enable it.
-            else if (isLevelAvailable(i)) {
+            } else if (isLevelAvailable(i)) {
                 levelButton.setDisable(false);
                 levelButton.setStyle("-fx-base: #4CAF50;");
                 String graphType = getRequiredGraphType(i);
                 levelButton.setText("Level " + i + " - " + graphType);
                 int level = i;
                 levelButton.setOnAction(e -> {
-                    if (!levelButton.isDisabled()) {
-                        FXGL.getGameScene().clearUINodes();
-                        startGame(level);
-                    }
+                    FXGL.getGameScene().clearUINodes();
+                    startGame(level);
                 });
             } else {
                 levelButton.setDisable(true);
@@ -131,10 +165,9 @@ public class MainMenu extends GameApplication {
         progressButton.setStyle("-fx-base: #2196F3;");
         levelBox.getChildren().add(progressButton);
 
-        // Create Back to Menu button positioned at the top-right corner.
+        // Create Back to Menu button at the top-right corner
         Button backToMenuButton = new Button("Back to Menu");
         backToMenuButton.setStyle("-fx-base: #009688;");
-        // Position the button at top-right, absolute coordinates.
         backToMenuButton.setTranslateX(700);
         backToMenuButton.setTranslateY(20);
         backToMenuButton.setOnAction(e -> {
@@ -142,12 +175,28 @@ public class MainMenu extends GameApplication {
             initUI();
         });
 
-        FXGL.getGameScene().addUINode(levelBox);
-        FXGL.getGameScene().addUINode(backToMenuButton);
+        // Before re-adding the SOUND button, ensure it is not null.
+        if (soundButton == null) {
+            initSoundButton();
+        }
+
+        // Add nodes to the scene, ensuring none are null.
+        if (levelBackground != null) {
+            FXGL.getGameScene().addUINode(levelBackground);
+        }
+        if (levelBox != null) {
+            FXGL.getGameScene().addUINode(levelBox);
+        }
+        if (backToMenuButton != null) {
+            FXGL.getGameScene().addUINode(backToMenuButton);
+        }
+        if (soundButton != null) {
+            FXGL.getGameScene().addUINode(soundButton);
+        }
     }
 
     private boolean isLevelAvailable(int level) {
-        // Level 1 is always available; for other levels, they must be unlocked but not already completed.
+        // Level 1 is always available; others must be unlocked and not completed.
         return level == 1 || (ProgressManager.isLevelUnlocked(level) && level > ProgressManager.getHighestCompletedLevel());
     }
 
@@ -161,7 +210,7 @@ public class MainMenu extends GameApplication {
             MainGameRunner.getInstance().startLevel2();
         } else {
             System.out.println("Starting game at level " + level);
-            // Additional logic for starting the level can be added here.
+            // Additional game initialization for other levels can be added here.
         }
     }
 

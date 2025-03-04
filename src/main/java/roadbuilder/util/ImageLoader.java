@@ -14,6 +14,7 @@ public class ImageLoader {
     private static final Map<TileType, Image> tileImages = new EnumMap<>(TileType.class);
     private static final Map<ButtonType, Image> buttonImages = new EnumMap<>(ButtonType.class);
     private static Image backgroundImage;
+    private static Image levelMenuBackgroundImage;
 
     static {
         // Load tile images
@@ -57,8 +58,13 @@ public class ImageLoader {
         buttonImages.put(ButtonType.EXIT, new Image(IMAGE_PATH + "exit_button.png"));
         buttonImages.put(ButtonType.EXIT_HOVER, new Image(IMAGE_PATH + "exit_button_hover.png"));
 
-        // Load background image
+        // Load SOUND button images
+        buttonImages.put(ButtonType.SOUND, new Image(IMAGE_PATH + "sound.png"));
+        buttonImages.put(ButtonType.SOUND_MUTED, new Image(IMAGE_PATH + "sound_muted.png"));
+
+        // Load background images
         backgroundImage = new Image(IMAGE_PATH + "background.png");
+        levelMenuBackgroundImage = new Image(IMAGE_PATH + "levelmenu_background.png");
     }
 
     public static Image getImage(TileType type) {
@@ -71,5 +77,9 @@ public class ImageLoader {
 
     public static Image getBackgroundImage() {
         return backgroundImage;
+    }
+
+    public static Image getLevelMenuBackgroundImage() {
+        return levelMenuBackgroundImage;
     }
 }
