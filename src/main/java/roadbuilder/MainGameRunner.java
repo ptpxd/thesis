@@ -6,7 +6,9 @@ import roadbuilder.levels.level1.InputHandler;
 import roadbuilder.levels.level1.Level1Game;
 import roadbuilder.levels.level2.Level2Game;
 import roadbuilder.util.Point2DUtil;
+import com.almasb.fxgl.dsl.FXGL;
 import javafx.geometry.Point2D;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +36,9 @@ public class MainGameRunner {
     }
 
     public void startLevel1() {
-        initGame();
+        // Define the level requirement for level1
+        String levelRequirement = "Simple";
+        initGame(levelRequirement);
         initInput();
         initGraph();
         initUI();
@@ -47,16 +51,19 @@ public class MainGameRunner {
         cities.add(new Point2D(300, 100));
         cities.add(new Point2D(100, 300));
         cities.add(new Point2D(300, 300));
-        initGame();
-        // Updated call: remove the 'cities' parameter since Level2Game.initializeLevel() no longer requires it.
+        // Define the level requirement for level2
+        String levelRequirement = "Complete";
+        initGame(levelRequirement);
+        // Updated call: Level2Game.initializeLevel() no longer requires cities.
         level2Game.initializeLevel();
         initInput();
         initGraph();
         initUI();
     }
 
-    private void initGame() {
-        gameInitializer.initGame(cities);
+    // Overloaded initGame method which accepts levelRequirement
+    private void initGame(String levelRequirement) {
+        gameInitializer.initGame(cities, levelRequirement);
         level1Game.initializeLevel(cities);
     }
 
