@@ -2,14 +2,14 @@ package roadbuilder.levels.level1;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import javafx.scene.Group;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import roadbuilder.app.TileComponent;
 import roadbuilder.model.TileType;
 import roadbuilder.util.ImageLoader;
 import javafx.geometry.Point2D;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-
 import java.util.List;
 import java.util.Set;
 
@@ -95,12 +95,17 @@ public class RoadBuilder {
         imageView.setFitWidth(TILE_SIZE);
         imageView.setFitHeight(TILE_SIZE);
 
+        // Build and attach the road segment entity
         Entity road = FXGL.entityBuilder()
                 .at(roadPoint)
                 .view(new Rectangle(TILE_SIZE, TILE_SIZE, Color.DARKGRAY))
                 .view(imageView)
                 .with(new TileComponent(roadType))
                 .buildAndAttach();
+
+        // Deduct the cost of the road tile (500) from the budget.
+        int currentBudget = FXGL.getWorldProperties().getInt("budget");
+        FXGL.getWorldProperties().setValue("budget", currentBudget - 500);
     }
 
     private static void updateCityTile(int x, int y) {

@@ -11,11 +11,6 @@ import roadbuilder.util.ImageLoader;
 import roadbuilder.app.ProgressManager;
 import roadbuilder.util.SoundManager;
 
-/**
- * MainMenu class implements the main menu UI with adjusted button placement.
- * The buttons (Play, Settings, Exit) are positioned accordingly.
- * A SOUND toggle button is placed in the bottom-right corner. On click it toggles between mute and unmute.
- */
 public class MainMenu extends GameApplication {
     private static MainMenu instance;
     private ImageView playButton;
@@ -208,6 +203,15 @@ public class MainMenu extends GameApplication {
         } else if (level == 2) {
             System.out.println("Starting Level 2");
             MainGameRunner.getInstance().startLevel2();
+        } else if (level == 3) {
+            System.out.println("Starting Level 3");
+            MainGameRunner.getInstance().startLevel3();
+        } else if (level == 4) {
+            System.out.println("Starting Level 4");
+            MainGameRunner.getInstance().startLevel4();
+        } else if (level == 5) {
+            System.out.println("Starting Level 5");
+            MainGameRunner.getInstance().startLevel5();
         } else {
             System.out.println("Starting game at level " + level);
             // Additional game initialization for other levels can be added here.

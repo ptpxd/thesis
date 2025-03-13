@@ -1,7 +1,7 @@
 package roadbuilder.levels.level1;
 
 import com.almasb.fxgl.dsl.FXGL;
-import javafx.geometry.Point2D;
+import com.almasb.fxgl.entity.Entity;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -9,11 +9,12 @@ import javafx.scene.text.Text;
 import roadbuilder.app.TileComponent;
 import roadbuilder.model.TileType;
 import roadbuilder.util.ImageLoader;
-
+import javafx.geometry.Point2D;
 import java.util.List;
 
 public class GameInitializer {
     private static final int TILE_SIZE = 40;
+    private Group budgetGroup; // Referencia a budget dobozhoz a későbbi frissítéshez
 
     // Updated to accept levelRequirement as a parameter
     public void initGame(List<Point2D> cities, String levelRequirement) {
@@ -35,6 +36,8 @@ public class GameInitializer {
 
         // Add requirement text box on the right center of the level with dynamic level requirement
         addRequirementTextBox(levelRequirement);
+        // Add budget text box below the requirement box displaying remaining money
+        addBudgetTextBox();
     }
 
     private void placeCity(int x, int y, List<Point2D> cities) {
@@ -86,7 +89,6 @@ public class GameInitializer {
 
         // Create the text to display the level requirement dynamically
         Text text = new Text("Teljesítsd ezt: '" + levelRequirement + "'");
-        // Set text position within the box for a padded appearance
         text.setX(10);
         // Align text vertically in the center; 15 is a small offset for visual alignment
         text.setY(boxHeight / 2 + 5);
@@ -98,6 +100,43 @@ public class GameInitializer {
         FXGL.entityBuilder()
                 .at(boxX, boxY)
                 .view(requirementTextBox)
+                .buildAndAttach();
+    }
+
+    // New method to add a budget text box that displays the remaining amount
+    private void addBudgetTextBox() {
+        double boardWidth = 10 * TILE_SIZE;
+        double boardHeight = 10 * TILE_SIZE;
+        double margin = 20;
+        double boxWidth = 200;
+        double boxHeight = 50;
+        double requirementBoxY = boardHeight / 2 - boxHeight / 2;
+        double gap = 10; // gap between requirement and budget boxes
+        double boxX = boardWidth + margin;
+        double boxY = requirementBoxY + boxHeight + gap;
+
+        // Create background rectangle for the budget box
+        Rectangle background = new Rectangle(boxWidth, boxHeight);
+        background.setFill(Color.BEIGE);
+        background.setStroke(Color.BLACK);
+
+        // Create the text to display the remaining budget (initially 10000)
+        Text budgetText = new Text("Fennmaradó: " + FXGL.getWorldProperties().getInt("budget"));
+        budgetText.setX(10);
+        budgetText.setY(boxHeight / 2 + 5);
+
+        // Group the rectangle and text together
+        budgetGroup = new Group(background, budgetText);
+
+        // Bind budget changes: whenever the "budget" property changes, update the displayed text
+        FXGL.getWorldProperties().<Integer>addListener("budget", (oldValue, newValue) -> {
+            budgetText.setText("Fennmaradó összeg: " + newValue);
+        });
+
+        // Build and attach the budget box entity at the calculated position
+        FXGL.entityBuilder()
+                .at(boxX, boxY)
+                .view(budgetGroup)
                 .buildAndAttach();
     }
 }

@@ -1,13 +1,15 @@
 package roadbuilder;
 
+import javafx.geometry.Point2D;
+import roadbuilder.levels.level1.Level1Game;
+import roadbuilder.levels.level2.Level2Game;
+import roadbuilder.levels.level3.Level3Game;
+import roadbuilder.levels.level4.Level4Game;
+import roadbuilder.levels.level5.Level5Game;
 import roadbuilder.levels.level1.GameInitializer;
 import roadbuilder.levels.level1.UIManager;
 import roadbuilder.levels.level1.InputHandler;
-import roadbuilder.levels.level1.Level1Game;
-import roadbuilder.levels.level2.Level2Game;
 import roadbuilder.util.Point2DUtil;
-import com.almasb.fxgl.dsl.FXGL;
-import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,11 +20,16 @@ public class MainGameRunner {
     private static MainGameRunner instance;
     private List<Point2D> cities = new ArrayList<>();
     private Set<String> roads = new HashSet<>();
+
     private GameInitializer gameInitializer = new GameInitializer();
     private UIManager uiManager = new UIManager();
     private InputHandler inputHandler;
+
     private Level1Game level1Game = new Level1Game();
     private Level2Game level2Game = new Level2Game();
+    private Level3Game level3Game = new Level3Game();
+    private Level4Game level4Game = new Level4Game();
+    private Level5Game level5Game = new Level5Game();
 
     private MainGameRunner() {
         inputHandler = new InputHandler(level1Game);
@@ -47,15 +54,47 @@ public class MainGameRunner {
     public void startLevel2() {
         cities.clear();
         roads.clear();
-        cities.add(new Point2D(100, 100));
-        cities.add(new Point2D(300, 100));
-        cities.add(new Point2D(100, 300));
-        cities.add(new Point2D(300, 300));
         // Define the level requirement for level2
         String levelRequirement = "Complete";
         initGame(levelRequirement);
         // Updated call: Level2Game.initializeLevel() no longer requires cities.
         level2Game.initializeLevel();
+        initInput();
+        initGraph();
+        initUI();
+    }
+
+    public void startLevel3() {
+        cities.clear();
+        roads.clear();
+        // Level3 will define its own cities in its initializeLevel method.
+        String levelRequirement = "Bipartite";
+        initGame(levelRequirement);
+        level3Game.initializeLevel();
+        initInput();
+        initGraph();
+        initUI();
+    }
+
+    public void startLevel4() {
+        cities.clear();
+        roads.clear();
+        // Level4 will define its own set of cities.
+        String levelRequirement = "Complex";
+        initGame(levelRequirement);
+        level4Game.initializeLevel();
+        initInput();
+        initGraph();
+        initUI();
+    }
+
+    public void startLevel5() {
+        cities.clear();
+        roads.clear();
+        // Level5 defines its own cities.
+        String levelRequirement = "Complex";
+        initGame(levelRequirement);
+        level5Game.initializeLevel();
         initInput();
         initGraph();
         initUI();
@@ -93,6 +132,6 @@ public class MainGameRunner {
     }
 
     public static void main(String[] args) {
-        MainGameRunner.getInstance().startLevel2();
+        MainGameRunner runner = MainGameRunner.getInstance();
     }
 }
