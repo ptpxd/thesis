@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import lombok.Getter;
 import roadbuilder.MainMenu;
 import roadbuilder.MainGameRunner;
 import roadbuilder.app.TileComponent;
@@ -19,6 +20,7 @@ import java.util.Objects;
 
 public class UIManager {
     private Button backButton;
+    @Getter
     private ImageView soundButton;
     private boolean soundMuted = false;
 

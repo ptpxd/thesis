@@ -17,27 +17,22 @@ public class GraphTypeDetector {
         Map<Point2D, List<Point2D>> roads = graphModel.getRoads();
         int cityCount = cities.size();
 
-        // Üres gráf esete
         if (roads.values().stream().allMatch(List::isEmpty)) {
             return GraphType.NONE;
         }
 
-        // Teljes gráf ellenőrzése
         if (isCompleteGraph(cities, roads, cityCount)) {
             return GraphType.COMPLETE;
         }
 
-        // Simple gráf ellenőrzése előbb, mint a bipartite
         if (isSimpleGraph(cities, roads, cityCount)) {
             return GraphType.SIMPLE;
         }
 
-        // Bipartite gráf ellenőrzése
         if (isBipartiteGraph(cities, roads)) {
             return GraphType.BIPARTITE;
         }
 
-        // Alapértelmezetten complex
         return GraphType.COMPLEX;
     }
 
@@ -100,7 +95,6 @@ public class GraphTypeDetector {
             return false;
         }
 
-        // Ellenőrizzük, hogy a gráf összekötött
         if (!isConnected(cities, roads)) {
             return false;
         }

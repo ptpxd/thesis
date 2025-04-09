@@ -1,6 +1,7 @@
 package roadbuilder;
 
 import javafx.geometry.Point2D;
+import lombok.Data;
 import roadbuilder.levels.level1.Level1Game;
 import roadbuilder.levels.level2.Level2Game;
 import roadbuilder.levels.level3.Level3Game;
@@ -16,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Data
 public class MainGameRunner {
     private static MainGameRunner instance;
     private List<Point2D> cities = new ArrayList<>();
@@ -43,7 +45,6 @@ public class MainGameRunner {
     }
 
     public void startLevel1() {
-        // Define the level requirement for level1
         String levelRequirement = "Simple";
         initGame(levelRequirement);
         initInput();
@@ -54,10 +55,8 @@ public class MainGameRunner {
     public void startLevel2() {
         cities.clear();
         roads.clear();
-        // Define the level requirement for level2
         String levelRequirement = "Complete";
         initGame(levelRequirement);
-        // Updated call: Level2Game.initializeLevel() no longer requires cities.
         level2Game.initializeLevel();
         initInput();
         initGraph();
@@ -67,7 +66,6 @@ public class MainGameRunner {
     public void startLevel3() {
         cities.clear();
         roads.clear();
-        // Level3 will define its own cities in its initializeLevel method.
         String levelRequirement = "Bipartite";
         initGame(levelRequirement);
         level3Game.initializeLevel();
@@ -79,7 +77,6 @@ public class MainGameRunner {
     public void startLevel4() {
         cities.clear();
         roads.clear();
-        // Level4 will define its own set of cities.
         String levelRequirement = "Complex";
         initGame(levelRequirement);
         level4Game.initializeLevel();
@@ -91,7 +88,6 @@ public class MainGameRunner {
     public void startLevel5() {
         cities.clear();
         roads.clear();
-        // Level5 defines its own cities.
         String levelRequirement = "Complex";
         initGame(levelRequirement);
         level5Game.initializeLevel();
@@ -100,7 +96,6 @@ public class MainGameRunner {
         initUI();
     }
 
-    // Overloaded initGame method which accepts levelRequirement
     private void initGame(String levelRequirement) {
         gameInitializer.initGame(cities, levelRequirement);
         level1Game.initializeLevel(cities);

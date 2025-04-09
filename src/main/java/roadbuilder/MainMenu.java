@@ -136,7 +136,7 @@ public class MainMenu extends GameApplication {
             if (i <= ProgressManager.getHighestCompletedLevel()) {
                 levelButton.setDisable(true);
                 levelButton.setStyle("-fx-base: #f44336;");
-                levelButton.setText("Level " + i + " - Locked (Teljesítve)");
+                levelButton.setText("Level " + i + " - Locked (Completed)");
             } else if (isLevelAvailable(i)) {
                 levelButton.setDisable(false);
                 levelButton.setStyle("-fx-base: #4CAF50;");

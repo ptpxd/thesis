@@ -19,10 +19,8 @@ public class Level3Game {
     }
 
     public void initializeLevel() {
-        // Újraszervezzük a városokat Level3 számára.
         clearCities();
 
-        // Definiáljuk a Level3 specifikus városokat.
         List<Point2D> freshCities = new ArrayList<>();
         freshCities.add(new Point2D(100, 150));
         freshCities.add(new Point2D(300, 150));
@@ -71,7 +69,6 @@ public class Level3Game {
     }
 
     public boolean checkLevelCompletion() {
-        // A ProgressManager segítségével megkapjuk az aktuális szintet.
         int currentLevel = ProgressManager.getHighestCompletedLevel() + 1;
         GraphType requiredGraphType = getRequiredGraphType();
         GraphType currentGraphType = analyzeGraphType();
@@ -126,7 +123,6 @@ public class Level3Game {
         return GraphTypeDetector.detectGraphType(graphModel);
     }
 
-    // Level3 esetén a követelményként elvárt gráf típus: BIPARTITE.
     private GraphType getRequiredGraphType() {
         return GraphType.BIPARTITE;
     }

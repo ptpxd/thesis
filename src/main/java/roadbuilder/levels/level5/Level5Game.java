@@ -11,10 +11,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Level5Game uses the CityRoadGraphModel to manage and analyze the road graph for level 5.
- * For Level5, the graph must be COMPLEX.
- */
 public class Level5Game {
     private CityRoadGraphModel graphModel;
 
@@ -23,10 +19,8 @@ public class Level5Game {
     }
 
     public void initializeLevel() {
-        // Reset the graph for Level5
         clearCities();
 
-        // Define Level5 specific cities using javafx.geometry.Point2D
         List<Point2D> freshCities = new ArrayList<>();
         freshCities.add(new Point2D(80, 80));
         freshCities.add(new Point2D(280, 80));
@@ -36,11 +30,9 @@ public class Level5Game {
         freshCities.add(new Point2D(480, 280));
         freshCities.add(new Point2D(280, 480));
 
-        // Add the cities to the graph model
         for (Point2D city : freshCities) {
             addCity(city);
         }
-        // Optional: print the current city connections
         graphModel.printCityConnections();
     }
 
@@ -77,10 +69,6 @@ public class Level5Game {
         return graphModel.getRoads();
     }
 
-    /**
-     * Checks if the current graph type matches the required COMPLEX type.
-     * Marks the level as completed if the requirement is met.
-     */
     public boolean checkLevelCompletion() {
         int currentLevel = ProgressManager.getHighestCompletedLevel() + 1;
         GraphType requiredGraphType = getRequiredGraphType();
@@ -122,7 +110,6 @@ public class Level5Game {
     }
 
     private int getRoadCount() {
-        // Since roads are bidirectional, count them once by dividing by 2.
         return graphModel.getRoads().values().stream()
                 .mapToInt(List::size)
                 .sum() / 2;
@@ -138,7 +125,6 @@ public class Level5Game {
         return GraphTypeDetector.detectGraphType(graphModel);
     }
 
-    // For Level5, the required graph type is COMPLEX.
     private GraphType getRequiredGraphType() {
         return GraphType.COMPLEX;
     }

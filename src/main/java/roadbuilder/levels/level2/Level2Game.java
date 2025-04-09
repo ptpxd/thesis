@@ -19,17 +19,14 @@ public class Level2Game {
     }
 
     public void initializeLevel() {
-        // Clear any previous cities by reinitializing the graph model.
         clearCities();
 
-        // Define new cities specific to Level2.
         List<Point2D> freshCities = new ArrayList<>();
         freshCities.add(new Point2D(100, 100));
         freshCities.add(new Point2D(300, 100));
         freshCities.add(new Point2D(100, 300));
         freshCities.add(new Point2D(300, 300));
 
-        // Add the fresh cities to the new graph model.
         for (Point2D city : freshCities) {
             addCity(city);
         }
@@ -43,7 +40,6 @@ public class Level2Game {
             displayGraphType();
             checkLevelCompletion();
         } else {
-            // Ensure the roads list is not null if the city already exists.
             if (!graphModel.getRoads().containsKey(city)) {
                 graphModel.getRoads().put(city, new ArrayList<>());
             }
@@ -126,7 +122,6 @@ public class Level2Game {
     }
 
     private GraphType getRequiredGraphType(int level) {
-        // For Level2 the intended requirement is COMPLETE.
         switch (level) {
             case 1:
                 return GraphType.SIMPLE;

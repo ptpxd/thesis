@@ -11,10 +11,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Level4Game uses the CityRoadGraphModel to build and analyze a road graph.
- * The required graph type for Level4 is set to COMPLEX.
- */
 public class Level4Game {
     private CityRoadGraphModel graphModel;
 
@@ -23,10 +19,8 @@ public class Level4Game {
     }
 
     public void initializeLevel() {
-        // Reset the graph for Level4
         clearCities();
 
-        // Define Level4 specific cities using javafx.geometry.Point2D
         List<Point2D> freshCities = new ArrayList<>();
         freshCities.add(new Point2D(50, 50));
         freshCities.add(new Point2D(250, 50));
@@ -35,11 +29,9 @@ public class Level4Game {
         freshCities.add(new Point2D(350, 250));
         freshCities.add(new Point2D(250, 450));
 
-        // Add the cities to the graph model
         for (Point2D city : freshCities) {
             addCity(city);
         }
-        // Optional: print the current city connections
         graphModel.printCityConnections();
     }
 
@@ -51,7 +43,6 @@ public class Level4Game {
             checkLevelCompletion();
         } else {
             if (!graphModel.getRoads().containsKey(city)) {
-                // Create an entry for the city if missing
                 graphModel.getRoads().put(city, new ArrayList<>());
             }
             System.out.println("Level4 - City already exists: " + city);
@@ -77,10 +68,6 @@ public class Level4Game {
         return graphModel.getRoads();
     }
 
-    /**
-     * Checks if the current graph type matches the required COMPLEX type.
-     * Marks the level as completed if the requirement is met.
-     */
     public boolean checkLevelCompletion() {
         int currentLevel = ProgressManager.getHighestCompletedLevel() + 1;
         GraphType requiredGraphType = getRequiredGraphType();
@@ -122,7 +109,6 @@ public class Level4Game {
     }
 
     private int getRoadCount() {
-        // Roads are stored twice (for each city), so divide count by 2.
         return graphModel.getRoads().values().stream()
                 .mapToInt(List::size)
                 .sum() / 2;
@@ -138,7 +124,6 @@ public class Level4Game {
         return GraphTypeDetector.detectGraphType(graphModel);
     }
 
-    // For Level4, the required graph type is COMPLEX.
     private GraphType getRequiredGraphType() {
         return GraphType.COMPLEX;
     }
