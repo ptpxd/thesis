@@ -35,18 +35,16 @@ public class MainMenu extends GameApplication {
 
     @Override
     public void initUI() {
-        // Create background image view for main menu
+
         ImageView background = new ImageView(ImageLoader.getBackgroundImage());
         background.setFitWidth(800);
         background.setFitHeight(600);
 
-        // Create a VBox container for menu buttons (Play, Settings, Exit)
         VBox menuBox = new VBox(10);
-        // Position the menu box
+
         menuBox.setTranslateX(350);
         menuBox.setTranslateY(170);
 
-        // Initialize Play button with hover effects
         playButton = new ImageView(ImageLoader.getButtonImage(ButtonType.PLAY));
         playButton.setOnMouseEntered(event -> playButton.setImage(ImageLoader.getButtonImage(ButtonType.PLAY_HOVER)));
         playButton.setOnMouseExited(event -> playButton.setImage(ImageLoader.getButtonImage(ButtonType.PLAY)));
@@ -55,47 +53,40 @@ public class MainMenu extends GameApplication {
             showLevelSelectionMenu();
         });
 
-        // Initialize Settings button with hover effects
         settingsButton = new ImageView(ImageLoader.getButtonImage(ButtonType.SETTINGS));
         settingsButton.setOnMouseEntered(event -> settingsButton.setImage(ImageLoader.getButtonImage(ButtonType.SETTINGS_HOVER)));
         settingsButton.setOnMouseExited(event -> settingsButton.setImage(ImageLoader.getButtonImage(ButtonType.SETTINGS)));
-        // Show settings menu on click
+
         settingsButton.setOnMouseClicked(event -> {
             roadbuilder.SettingsMenu.show();
         });
 
-        // Initialize Exit button with hover effects
         exitButton = new ImageView(ImageLoader.getButtonImage(ButtonType.EXIT));
         exitButton.setTranslateY(-10);
         exitButton.setOnMouseEntered(event -> exitButton.setImage(ImageLoader.getButtonImage(ButtonType.EXIT_HOVER)));
         exitButton.setOnMouseExited(event -> exitButton.setImage(ImageLoader.getButtonImage(ButtonType.EXIT)));
         exitButton.setOnMouseClicked(event -> System.exit(0));
 
-        // Add Play, Settings, and Exit buttons to the container
         menuBox.getChildren().addAll(playButton, settingsButton, exitButton);
 
-        // Initialize SOUND toggle button
         initSoundButton();
 
-        // Add background, the menu container, and the SOUND button to the scene
         FXGL.getGameScene().addUINode(background);
         FXGL.getGameScene().addUINode(menuBox);
         FXGL.getGameScene().addUINode(soundButton);
     }
 
-    // Helper to (re)initialize the soundButton.
     private void initSoundButton() {
         soundButton = new ImageView(ImageLoader.getButtonImage(ButtonType.SOUND));
-        // Set preferred size for the sound button (assumption 50x50)
+
         soundButton.setFitWidth(50);
         soundButton.setFitHeight(50);
-        // Ensure the entire rectangular area is clickable even if parts are transparent.
+
         soundButton.setPickOnBounds(true);
-        // Position the SOUND button in the bottom-right corner with a 10px margin:
-        // x = 800 - 50 - 10 = 740, y = 600 - 50 - 10 = 540
+
         soundButton.setTranslateX(740);
         soundButton.setTranslateY(540);
-        // Set on-click event to toggle sound state using muteSound() and unMuteSound() methods.
+
         soundButton.setOnMouseClicked(event -> {
             SoundManager soundManager = SoundManager.getInstance();
             if (!soundMuted) {
@@ -112,7 +103,6 @@ public class MainMenu extends GameApplication {
 
     @Override
     protected void initGame() {
-        // Start background music
         SoundManager soundManager = SoundManager.getInstance();
         soundManager.playBackgroundMusic();
     }
@@ -120,19 +110,16 @@ public class MainMenu extends GameApplication {
     public void showLevelSelectionMenu() {
         FXGL.getGameScene().clearUINodes();
 
-        // Create background image for level menu using levelMenuBackgroundImage
         ImageView levelBackground = new ImageView(ImageLoader.getLevelMenuBackgroundImage());
         levelBackground.setFitWidth(800);
         levelBackground.setFitHeight(600);
 
-        // Container for level selection buttons
         VBox levelBox = new VBox(10);
         levelBox.setTranslateX(350);
         levelBox.setTranslateY(250);
 
         for (int i = 1; i <= 5; i++) {
             Button levelButton = new Button();
-            // Set button state based on level progression
             if (i <= ProgressManager.getHighestCompletedLevel()) {
                 levelButton.setDisable(true);
                 levelButton.setStyle("-fx-base: #f44336;");
@@ -160,7 +147,6 @@ public class MainMenu extends GameApplication {
         progressButton.setStyle("-fx-base: #2196F3;");
         levelBox.getChildren().add(progressButton);
 
-        // Create Back to Menu button at the top-right corner
         Button backToMenuButton = new Button("Back to Menu");
         backToMenuButton.setStyle("-fx-base: #009688;");
         backToMenuButton.setTranslateX(700);
@@ -170,12 +156,10 @@ public class MainMenu extends GameApplication {
             initUI();
         });
 
-        // Before re-adding the SOUND button, ensure it is not null.
         if (soundButton == null) {
             initSoundButton();
         }
 
-        // Add nodes to the scene, ensuring none are null.
         if (levelBackground != null) {
             FXGL.getGameScene().addUINode(levelBackground);
         }
@@ -191,7 +175,6 @@ public class MainMenu extends GameApplication {
     }
 
     private boolean isLevelAvailable(int level) {
-        // Level 1 is always available; others must be unlocked and not completed.
         return level == 1 || (ProgressManager.isLevelUnlocked(level) && level > ProgressManager.getHighestCompletedLevel());
     }
 
@@ -214,7 +197,6 @@ public class MainMenu extends GameApplication {
             MainGameRunner.getInstance().startLevel5();
         } else {
             System.out.println("Starting game at level " + level);
-            // Additional game initialization for other levels can be added here.
         }
     }
 

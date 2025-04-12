@@ -89,7 +89,9 @@ public class GraphTypeDetector {
         return true;
     }
 
-    private static boolean isSimpleGraph(Set<Point2D> cities, Map<Point2D, List<Point2D>> roads, int cityCount) {
+    private static boolean isSimpleGraph(Set<Point2D> cities,
+                                                        Map<Point2D, List<Point2D>> roads,
+                                                        int cityCount) {
         int edgeCount = roads.values().stream().mapToInt(List::size).sum() / 2;
         if (edgeCount > cityCount - 1) {
             return false;
@@ -140,7 +142,10 @@ public class GraphTypeDetector {
         return false;
     }
 
-    private static boolean cycleDFS(Point2D current, Map<Point2D, List<Point2D>> roads, Map<Point2D, Boolean> visited, Point2D parent) {
+    private static boolean cycleDFS(Point2D current,
+                                                        Map<Point2D, List<Point2D>> roads,
+                                                        Map<Point2D, Boolean> visited,
+                                                        Point2D parent) {
         visited.put(current, true);
         List<Point2D> neighbors = roads.getOrDefault(current, Collections.emptyList());
 
